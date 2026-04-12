@@ -3,20 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ファンタジーライフi 攻略まとめ</title>
+<title>GameLog - ゲーム攻略ポータル</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; min-height: 100vh; }
-  h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; color: #ffd700; }
-  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 32px; }
-  .page-list { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-  .page-card { display: block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 16px 20px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
-  .page-card:hover { border-color: #ffd700; background: #1e2a4a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-  .page-card-title { font-size: 1.05rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
-  .page-card-desc { font-size: 0.8rem; color: #888; }
-  .page-card-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; margin-bottom: 8px; }
-  .badge-boss { background: #e74c3c33; color: #ff6b6b; border: 1px solid #e74c3c55; }
-  .badge-levelup { background: #27ae6033; color: #55efc4; border: 1px solid #27ae6055; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; }
+
+  /* Header */
+  .site-header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 24px 20px 20px; text-align: center; border-bottom: 1px solid #1e2a4a; }
+  .site-header h1 { font-size: 1.6rem; color: #ffd700; letter-spacing: 2px; }
+  .site-header .subtitle { font-size: 0.85rem; color: #888; margin-top: 4px; }
+
+  /* Tab Navigation */
+  .tab-bar { max-width: 700px; margin: 20px auto 0; display: flex; gap: 4px; padding: 0 16px; }
+  .tab-btn { flex: 1; padding: 10px 12px; border: 1px solid #1e2a4a; border-bottom: none; border-radius: 8px 8px 0 0; background: #16213e; color: #888; cursor: pointer; font-size: 0.85rem; text-align: center; transition: all 0.2s; }
+  .tab-btn:hover { color: #ffd700; border-color: #ffd70044; }
+  .tab-btn.active { background: #1a1a2e; color: #ffd700; border-color: #ffd70055; font-weight: bold; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 20px 16px; }
+
+  /* Game Cards (Portal Top) */
+  .game-grid { display: flex; flex-direction: column; gap: 14px; }
+  .game-card { display: block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 12px; padding: 18px 20px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; cursor: pointer; }
+  .game-card:hover { border-color: #ffd700; background: #1e2a4a; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+  .game-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .game-card-title { font-size: 1.1rem; font-weight: bold; color: #fff; }
+  .game-card-genre { font-size: 0.7rem; background: #ffd70022; color: #ffd700; padding: 3px 10px; border-radius: 12px; border: 1px solid #ffd70033; }
+  .game-card-desc { font-size: 0.82rem; color: #888; margin-top: 4px; line-height: 1.5; }
+  .game-card-badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .game-card-badge { font-size: 0.7rem; padding: 2px 10px; border-radius: 12px; }
+  .badge-guide { background: #3498db22; color: #74b9ff; border: 1px solid #3498db44; }
+  .badge-log { background: #27ae6022; color: #55efc4; border: 1px solid #27ae6044; }
+
+  /* Progress bar on game card */
+  .game-card-progress { margin-top: 10px; }
+  .progress-bar { height: 4px; background: #333; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #ffd700, #55efc4); border-radius: 2px; transition: width 0.3s; }
+  .progress-text { font-size: 0.7rem; color: #666; margin-top: 4px; }
+
+  /* GameLog Detail View */
+  .gamelog-panel { display: none; }
+  .gamelog-panel.active { display: block; }
+
+  .back-btn { background: none; border: none; color: #74b9ff; font-size: 0.85rem; cursor: pointer; margin-bottom: 14px; padding: 4px 0; }
+  .back-btn:hover { color: #ffd700; }
+
+  .detail-title { font-size: 1.3rem; color: #ffd700; margin-bottom: 4px; }
+  .detail-genre { font-size: 0.8rem; color: #666; margin-bottom: 8px; }
+  .detail-updated { font-size: 0.7rem; color: #555; margin-bottom: 16px; }
+
+  .section { background: #16213e; border: 1px solid #1e2a4a; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .section-title { font-size: 0.85rem; color: #ffd700; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+  /* Memo */
+  .memo-edit { width: 100%; min-height: 80px; padding: 10px 12px; background: #0f0f1a; border: 1px solid #1e2a4a; border-radius: 8px; color: #e0e0e0; font-size: 0.85rem; line-height: 1.6; resize: vertical; outline: none; font-family: inherit; }
+  .memo-edit:focus { border-color: #ffd700; }
+  .btn-memo-save { display: inline-block; margin-top: 8px; padding: 8px 16px; background: #ffd700; color: #1a1a2e; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+  .btn-memo-save:hover { opacity: 0.9; }
+  .memo-status { font-size: 0.75rem; color: #55efc4; margin-left: 8px; }
+
+  /* Links */
+  .link-list { list-style: none; }
+  .link-item { margin-bottom: 6px; }
+  .link-item a { color: #74b9ff; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+  .link-item a:hover { color: #ffd700; }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e2a4a; font-size: 0.85rem; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: #ffd700; cursor: pointer; flex-shrink: 0; }
+  .check-item label { cursor: pointer; flex: 1; line-height: 1.4; }
+  .check-item.done label { text-decoration: line-through; color: #666; }
+
+  /* Walkthrough */
+  .walkthrough { font-size: 0.85rem; line-height: 1.7; color: #ccc; }
+  .walkthrough h2 { font-size: 0.95rem; color: #ffd700; margin: 14px 0 6px; border-bottom: 1px solid #1e2a4a; padding-bottom: 4px; }
+  .walkthrough h2:first-child { margin-top: 0; }
+  .walkthrough p { margin: 6px 0; }
+  .walkthrough ul, .walkthrough ol { padding-left: 20px; margin: 6px 0; }
+  .walkthrough li { margin: 4px 0; }
+  .walkthrough strong { color: #e0e0e0; }
+
+  .empty-text { font-size: 0.8rem; color: #555; font-style: italic; }
 
   /* Hamburger Menu */
   .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
@@ -27,13 +95,23 @@
   .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
   .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
   .nav-overlay.active { opacity: 1; visibility: visible; }
-  .nav-panel { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
   .nav-panel.active { right: 0; }
   .nav-panel-title { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
-  .nav-link { display: block; padding: 12px 16px; margin-bottom: 4px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.95rem; transition: all 0.2s; }
+  .nav-section-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid #1e2a4a; }
+  .nav-link { display: block; padding: 10px 14px; margin-bottom: 2px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
   .nav-link:hover { background: #1e2a4a; color: #ffd700; }
   .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
-  .nav-link-desc { font-size: 0.75rem; color: #666; margin-top: 2px; }
+  .nav-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 40px 20px; color: #555; }
+
+  @media (max-width: 480px) {
+    .site-header h1 { font-size: 1.3rem; }
+    .game-card-title { font-size: 1rem; }
+    .tab-btn { font-size: 0.78rem; padding: 8px 8px; }
+  }
 </style>
 </head>
 <body>
@@ -44,38 +122,77 @@
 </button>
 <div class="nav-overlay" id="navOverlay"></div>
 <nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
-  <div class="nav-panel-title">メニュー</div>
+  <div class="nav-panel-title">GameLog</div>
   <a href="index.html" class="nav-link current">
-    TOP
+    ポータルTOP
+    <div class="nav-link-desc">ゲーム一覧・進捗管理</div>
+  </a>
+  <div class="nav-section-label">ファンタジーライフi</div>
+  <a href="pages/fl/index.html" class="nav-link">
+    FL攻略TOP
     <div class="nav-link-desc">攻略ページ一覧</div>
   </a>
-  <a href="pages/rank5-boss.html" class="nav-link">
+  <a href="pages/fl/rank5-boss.html" class="nav-link">
     ボス一覧
     <div class="nav-link-desc">エリアランク5以上のボス・ドロップ素材</div>
   </a>
-  <a href="pages/level-up.html" class="nav-link">
+  <a href="pages/fl/level-up.html" class="nav-link">
     レベル上げ
     <div class="nav-link-desc">レベル帯別おすすめスポット</div>
   </a>
 </nav>
 
-<h1>ファンタジーライフi 攻略まとめ</h1>
-<p class="subtitle">バカデッカーナ大陸の攻略情報</p>
+<header class="site-header">
+  <h1>GameLog</h1>
+  <p class="subtitle">ゲーム攻略ポータル</p>
+</header>
 
-<div class="page-list" id="pageList">
-  <a href="pages/rank5-boss.html" class="page-card">
-    <span class="page-card-badge badge-boss">ボス</span>
-    <div class="page-card-title">エリアランク5以上 ボス一覧</div>
-    <div class="page-card-desc">全エリアの出現ボス・ドロップ素材まとめ（検索・フィルター付き）</div>
-  </a>
-  <a href="pages/level-up.html" class="page-card">
-    <span class="page-card-badge badge-levelup">レベル上げ</span>
-    <div class="page-card-title">効率的なレベル上げ場所まとめ</div>
-    <div class="page-card-desc">レベル帯別おすすめスポット・経験値稼ぎのコツ（戦闘職/採取職/制作職）</div>
-  </a>
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="games" onclick="switchTab('games')">ゲーム一覧</button>
+  <button class="tab-btn" data-tab="gamelog" onclick="switchTab('gamelog')">進捗管理</button>
+</div>
+
+<div class="container">
+  <!-- ゲーム一覧タブ -->
+  <div id="gamesTab" class="tab-content">
+    <div class="game-grid">
+      <!-- FL攻略カード -->
+      <a href="pages/fl/index.html" class="game-card">
+        <div class="game-card-header">
+          <span class="game-card-title">ファンタジーライフi</span>
+          <span class="game-card-genre">アクションRPG</span>
+        </div>
+        <div class="game-card-desc">バカデッカーナ大陸の攻略情報まとめ。ボス一覧・レベル上げ効率ガイドなど。</div>
+        <div class="game-card-badges">
+          <span class="game-card-badge badge-guide">攻略ガイド</span>
+          <span class="game-card-badge badge-log">進捗管理</span>
+        </div>
+      </a>
+      <!-- 今後ゲームを追加するエリア（動的に生成） -->
+    </div>
+    <div id="dynamicGameCards"></div>
+  </div>
+
+  <!-- 進捗管理タブ -->
+  <div id="gamelogTab" class="tab-content" style="display:none;">
+    <div id="gamelogList" class="game-grid"></div>
+    <div id="gamelogDetail" class="gamelog-panel"></div>
+  </div>
 </div>
 
 <script>
+// ===== Tab Switching =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById('gamesTab').style.display = tab === 'games' ? 'block' : 'none';
+  document.getElementById('gamelogTab').style.display = tab === 'gamelog' ? 'block' : 'none';
+  if (tab === 'gamelog') {
+    showGamelogList();
+  }
+}
+
+// ===== Hamburger Menu =====
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const navOverlay = document.getElementById('navOverlay');
 const navPanel = document.getElementById('navPanel');
@@ -95,6 +212,190 @@ navOverlay.addEventListener('click', toggleMenu);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu();
 });
+
+// ===== GameLog (Progress Management) =====
+let games = [];
+let currentGameId = null;
+const LS_MEMO = 'gamelog_memos';
+const LS_CHECK = 'gamelog_checks';
+
+function getLocal(key) { try { return JSON.parse(localStorage.getItem(key) || '{}'); } catch { return {}; } }
+function setLocal(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+async function loadGames() {
+  try {
+    const res = await fetch('data/games.json?' + Date.now());
+    const data = await res.json();
+    games = data.games || [];
+    const checks = getLocal(LS_CHECK);
+    games.forEach(g => {
+      if (checks[g.id]) {
+        checks[g.id].forEach((done, i) => {
+          if (i < g.progress.length && done !== null) g.progress[i].done = done;
+        });
+      }
+    });
+  } catch {
+    games = [];
+  }
+}
+
+function showGamelogList() {
+  const detail = document.getElementById('gamelogDetail');
+  const list = document.getElementById('gamelogList');
+  detail.classList.remove('active');
+  detail.innerHTML = '';
+  list.style.display = 'flex';
+
+  if (games.length === 0) {
+    list.innerHTML = '<div class="empty-state"><p>ゲームが登録されていません</p></div>';
+    return;
+  }
+
+  list.innerHTML = games.map(g => {
+    const total = g.spoilerGuard ? '?' : g.progress.length;
+    const done = g.progress.filter(p => p.done).length;
+    const pct = g.spoilerGuard ? null : (g.progress.length > 0 ? Math.round((done / g.progress.length) * 100) : 0);
+
+    return `
+      <div class="game-card" onclick="showGamelogDetail('${g.id}')">
+        <div class="game-card-header">
+          <span class="game-card-title">${esc(g.title)}</span>
+          ${g.genre ? `<span class="game-card-genre">${esc(g.genre)}</span>` : ''}
+        </div>
+        ${done > 0 || (!g.spoilerGuard && g.progress.length > 0) ? `
+          <div class="game-card-progress">
+            ${pct !== null ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>` : ''}
+            <div class="progress-text">${done}/${total} 完了${pct !== null ? ` (${pct}%)` : ''}</div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function showGamelogDetail(id) {
+  const game = games.find(g => g.id === id);
+  if (!game) return;
+
+  currentGameId = id;
+  const list = document.getElementById('gamelogList');
+  const detail = document.getElementById('gamelogDetail');
+  list.style.display = 'none';
+  detail.classList.add('active');
+
+  const memos = getLocal(LS_MEMO);
+  const memoVal = memos[game.id] !== undefined ? memos[game.id] : (game.memo || '');
+
+  detail.innerHTML = `
+    <button class="back-btn" onclick="showGamelogList()">&#8592; 一覧に戻る</button>
+    <div class="detail-title">${esc(game.title)}</div>
+    ${game.genre ? `<div class="detail-genre">${esc(game.genre)}</div>` : ''}
+    <div class="detail-updated">最終更新: ${game.updatedAt || '---'}</div>
+
+    <div class="section">
+      <div class="section-title">メモ</div>
+      <textarea id="memoArea" class="memo-edit" placeholder="進捗や気になることをメモ...">${esc(memoVal)}</textarea>
+      <button class="btn-memo-save" onclick="saveMemo('${game.id}')">メモを保存</button>
+      <span id="memoStatus" class="memo-status"></span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">リンク集</div>
+      ${game.links && game.links.length > 0
+        ? `<ul class="link-list">${game.links.map(l =>
+            `<li class="link-item"><a href="${esc(l.url)}" target="_blank" rel="noopener">&#8594; ${esc(l.name)}</a></li>`
+          ).join('')}</ul>`
+        : `<div class="empty-text">リンクはまだありません</div>`}
+    </div>
+
+    <div class="section">
+      <div class="section-title">進捗チェックリスト</div>
+      ${game.progress && game.progress.length > 0
+        ? `<ul class="checklist">${renderProgress(game)}</ul>`
+        : `<div class="empty-text">チェック項目はまだありません</div>`}
+    </div>
+
+    ${game.walkthrough ? `
+      <div class="section">
+        <div class="section-title">攻略情報</div>
+        <div class="walkthrough">${renderMd(game.walkthrough)}</div>
+      </div>
+    ` : ''}
+  `;
+}
+
+function saveMemo(gameId) {
+  const memo = document.getElementById('memoArea').value;
+  const status = document.getElementById('memoStatus');
+  const memos = getLocal(LS_MEMO);
+  memos[gameId] = memo;
+  setLocal(LS_MEMO, memos);
+  status.textContent = '保存しました';
+  setTimeout(() => { status.textContent = ''; }, 2000);
+}
+
+function renderProgress(game) {
+  const items = game.progress;
+  const spoiler = game.spoilerGuard;
+  let visibleItems = items;
+  if (spoiler) {
+    const firstUndone = items.findIndex(p => !p.done);
+    if (firstUndone === -1) {
+      visibleItems = items;
+    } else {
+      visibleItems = items.slice(0, firstUndone + 1);
+    }
+  }
+  return visibleItems.map((p, i) =>
+    `<li class="check-item ${p.done ? 'done' : ''}">
+      <input type="checkbox" id="chk-${i}" ${p.done ? 'checked' : ''} onchange="toggleProgress('${game.id}', ${i}, this.checked)">
+      <label for="chk-${i}">${esc(p.text)}</label>
+    </li>`
+  ).join('') + (spoiler && visibleItems.length < items.length
+    ? `<li class="check-item" style="color:#555;font-style:italic;padding:8px 0;">クリアすると次の章が表示されます...</li>`
+    : '');
+}
+
+function toggleProgress(gameId, index, done) {
+  const game = games.find(g => g.id === gameId);
+  if (!game) return;
+  game.progress[index].done = done;
+  const checks = getLocal(LS_CHECK);
+  if (!checks[gameId]) checks[gameId] = [];
+  checks[gameId][index] = done;
+  setLocal(LS_CHECK, checks);
+  if (game.spoilerGuard) {
+    showGamelogDetail(gameId);
+  } else {
+    const item = document.getElementById(`chk-${index}`).closest('.check-item');
+    item.classList.toggle('done', done);
+  }
+}
+
+function renderMd(text) {
+  let html = esc(text);
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+  html = html.split('\n').map(line => {
+    if (line.startsWith('<h2>') || line.startsWith('<ul>') || line.startsWith('<li>') || line.trim() === '') return line;
+    return `<p>${line}</p>`;
+  }).join('\n');
+  html = html.replace(/<p>\s*<\/p>/g, '');
+  return html;
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Init
+loadGames();
 </script>
 </body>
 </html>

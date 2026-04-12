@@ -3,316 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ファンタジーライフi - エリアランク5以上ボス一覧</title>
+<title>ファンタジーライフi 攻略まとめ</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
-  h1 { text-align: center; margin-bottom: 8px; font-size: 1.4rem; color: #ffd700; }
-  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 20px; }
-  .controls { max-width: 1100px; margin: 0 auto 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .search-box { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid #444; border-radius: 8px; background: #16213e; color: #e0e0e0; font-size: 1rem; outline: none; }
-  .search-box:focus { border-color: #ffd700; }
-  .search-box::placeholder { color: #666; }
-  .filter-btn { padding: 8px 16px; border: 1px solid #444; border-radius: 20px; background: #16213e; color: #ccc; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
-  .filter-btn:hover { border-color: #ffd700; color: #ffd700; }
-  .filter-btn.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; font-weight: bold; }
-  .stats { max-width: 1100px; margin: 0 auto 10px; font-size: 0.8rem; color: #888; }
-  .table-wrap { max-width: 1100px; margin: 0 auto; overflow-x: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-  table { width: 100%; border-collapse: collapse; background: #16213e; }
-  thead th { background: #0f3460; color: #ffd700; padding: 12px 10px; text-align: left; font-size: 0.85rem; position: sticky; top: 0; cursor: pointer; white-space: nowrap; user-select: none; }
-  thead th:hover { background: #1a4a7a; }
-  thead th .sort-arrow { margin-left: 4px; font-size: 0.7rem; }
-  tbody tr { border-bottom: 1px solid #1e2a4a; transition: background 0.15s; }
-  tbody tr:hover { background: #1e2a4a; }
-  tbody td { padding: 10px; font-size: 0.85rem; vertical-align: top; }
-  .type-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; }
-  .type-monster { background: #e74c3c33; color: #ff6b6b; border: 1px solid #e74c3c55; }
-  .type-fish { background: #3498db33; color: #74b9ff; border: 1px solid #3498db55; }
-  .type-rock { background: #f39c1233; color: #ffeaa7; border: 1px solid #f39c1255; }
-  .type-tree { background: #27ae6033; color: #55efc4; border: 1px solid #27ae6055; }
-  .rank-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
-  .rank-gold { background: #ffd70033; color: #ffd700; border: 1px solid #ffd70055; }
-  .rank-silver { background: #c0c0c033; color: #c0c0c0; border: 1px solid #c0c0c055; }
-  .rank-legend { background: #9b59b633; color: #d6a3ff; border: 1px solid #9b59b655; }
-  .drop-list { font-size: 0.8rem; color: #aaa; line-height: 1.5; }
-  .no-results { text-align: center; padding: 40px; color: #666; font-size: 1rem; }
-  .area-name { color: #74b9ff; font-size: 0.8rem; }
-  mark { background: #ffd70055; color: #ffd700; border-radius: 2px; padding: 0 2px; }
-  @media (max-width: 600px) {
-    body { padding: 12px 8px; }
-    .controls { flex-direction: column; }
-    .filter-btn { font-size: 0.75rem; padding: 6px 12px; }
-    .table-wrap { border-radius: 8px; box-shadow: none; }
-    table, thead, tbody, th, td, tr { display: block; }
-    thead { display: none; }
-    tbody tr { margin-bottom: 12px; background: #16213e; border-radius: 8px; border: 1px solid #1e2a4a; padding: 12px; position: relative; }
-    tbody tr:hover { background: #1e2a4a; }
-    tbody td { padding: 4px 0; border: none; font-size: 0.82rem; }
-    tbody td:nth-child(1),
-    tbody td:nth-child(2) { display: inline-block; margin-right: 8px; }
-    tbody td:nth-child(3) { font-size: 1rem; font-weight: bold; color: #fff; margin: 6px 0 4px; }
-    tbody td:nth-child(4)::before { content: "📍 "; }
-    tbody td:nth-child(5)::before { content: "💎 "; font-size: 0.75rem; }
-    tbody td:nth-child(5) { line-height: 1.6; }
-    tbody td:nth-child(6):not(:empty)::before { content: "📝 "; }
-    tbody td:nth-child(6):empty { display: none; }
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; min-height: 100vh; }
+  h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; color: #ffd700; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 32px; }
+  .page-list { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .page-card { display: block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 16px 20px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
+  .page-card:hover { border-color: #ffd700; background: #1e2a4a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .page-card-title { font-size: 1.05rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
+  .page-card-desc { font-size: 0.8rem; color: #888; }
+  .page-card-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; margin-bottom: 8px; }
+  .badge-boss { background: #e74c3c33; color: #ff6b6b; border: 1px solid #e74c3c55; }
 </style>
 </head>
 <body>
 
-<h1>ファンタジーライフi エリアランク5以上 ボス一覧</h1>
-<p class="subtitle">バカデッカーナ大陸 全エリアの出現ボス・素材まとめ</p>
+<h1>ファンタジーライフi 攻略まとめ</h1>
+<p class="subtitle">バカデッカーナ大陸の攻略情報</p>
 
-<div class="controls">
-  <input type="text" class="search-box" id="search" placeholder="名前・ドロップ素材で検索...">
-  <button class="filter-btn active" data-filter="all">全て</button>
-  <button class="filter-btn" data-filter="モンスター">モンスター</button>
-  <button class="filter-btn" data-filter="魚">魚</button>
-  <button class="filter-btn" data-filter="岩">岩</button>
-  <button class="filter-btn" data-filter="木">木</button>
-</div>
-<div class="stats" id="stats"></div>
-
-<div class="table-wrap">
-<table id="bossTable">
-  <thead>
-    <tr>
-      <th data-col="0">種類 <span class="sort-arrow"></span></th>
-      <th data-col="1">冠 <span class="sort-arrow"></span></th>
-      <th data-col="2">名前 <span class="sort-arrow"></span></th>
-      <th data-col="3">エリア <span class="sort-arrow"></span></th>
-      <th data-col="4">ドロップ</th>
-      <th data-col="5">備考 <span class="sort-arrow"></span></th>
-    </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
-</table>
-<div class="no-results" id="noResults" style="display:none;">該当するボスが見つかりません</div>
+<div class="page-list" id="pageList">
+  <a href="pages/rank5-boss.html" class="page-card">
+    <span class="page-card-badge badge-boss">ボス</span>
+    <div class="page-card-title">エリアランク5以上 ボス一覧</div>
+    <div class="page-card-desc">全エリアの出現ボス・ドロップ素材まとめ（検索・フィルター付き）</div>
+  </a>
 </div>
 
-<script>
-const DATA = [
-  // カラット砂漠西
-  ["モンスター","金冠","石工のゴーレム","カラット砂漠西","太陽のカケラ、太古の核、太古の真核",""],
-  ["魚","金冠","ゴールデンカジキ","カラット砂漠西","ゴールデンカジキ、ゴールデンヒレ、さかなのウロコ",""],
-  ["岩","金冠","地のスタークリスタル","カラット砂漠西","アースのカケラ、土のマナ、エメラルド、ダイヤモンド、上ハッカ鉱、上ミステニア石材",""],
-  ["モンスター","銀冠","オオスナグモ","カラット砂漠西","絹糸、ピンク絹糸、どくのもと",""],
-  ["モンスター","銀冠","オオスナトカゲ","カラット砂漠西","やじゅうの皮、大きなしっぽ、ひらめきの素",""],
-  ["モンスター","銀冠","ビッグゴースト","カラット砂漠西","精霊の粉、魔法の粉、まひのもと、ひらめきの素","夜"],
-  ["モンスター","銀冠","サンドゴーレム","カラット砂漠西","太陽のカケラ、砂岩、トパーズ、ひらめき素","昼"],
-  ["モンスター","銀冠","ハニワ族長","カラット砂漠西","ハニワストーン、キントレー金、砂岩、ひらめきの素",""],
-  ["モンスター","伝説","伝説ギラギラスタル","カラット砂漠西","伝説ギンギラダイヤ",""],
-  // カラット砂漠東
-  ["モンスター","金冠","ロードオブカース","カラット砂漠東","竜骨のツノ、化石のカケラ、闇の玉、ひらめきの素",""],
-  ["魚","金冠","虹のトビウオ","カラット砂漠東","虹のトビウオ、虹色ヒレ、さかなのウロコ",""],
-  ["魚","金冠","地底魚","カラット砂漠東","地底魚、地底ウロコ、さかなのウロコ","ゴンジリ洞窟"],
-  ["岩","金冠","太古の巨大化石","カラット砂漠東","イネムリレッグ化石、イネムリボディ化石、イネムリヘッド化石、古代エメラルド、化石のカケラ、ハッカ鉱、上ミステリア石材","エリアチャレンジ"],
-  ["モンスター","銀冠","ビッグゴースト","カラット砂漠東","精霊の粉、魔法の粉、まひのもと","ゴンジリ洞窟/夜"],
-  ["モンスター","銀冠","サンドゴーレム","カラット砂漠東","太陽のカケラ、砂岩、トパーズ、ひらめき素","ゴンジリ洞窟/昼"],
-  ["モンスター","銀冠","アイアンゴーレム","カラット砂漠東","アクアマリン、命のカケラ、ハルカーナ鉄",""],
-  ["モンスター","伝説","伝説ギンギラスタル","カラット砂漠東","伝説ギンギラダイヤ",""],
-  // ミドリーナ台地
-  ["魚","金冠","平原のヌシ","ミドリーナ台地","平原のヌシ、平原のヌシコケ、さかなのウロコ",""],
-  ["モンスター","銀冠","デキャロッテ","ミドリーナ台地","ニンジン、まっかニンジン、ひらめきの素",""],
-  ["モンスター","銀冠","デカヤマグモ","ミドリーナ台地","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["モンスター","伝説","伝説ジャガキング","ミドリーナ台地","伝説ジャガキング",""],
-  // グランベリー大平原南
-  ["モンスター","金冠","グランキマイラ","グランベリー大平原南","風のマナ、まじゅう肉、幻獣肉、巨大なしっぽ、ひらめきの素",""],
-  ["岩","金冠","炎のスタークリスタル","グランベリー大平原南","炎のマナ、ファイアのカケラ、トパーズ、ミステニア銅、上ミステニア石材","グランネーブル洞窟"],
-  ["魚","金冠","クリスタルバス","グランベリー大平原南","クリスタルバス","グランネーブル洞窟"],
-  ["魚","金冠","深海魚","グランベリー大平原南","深海魚","グランネーブル洞窟"],
-  ["モンスター","銀冠","フラッドコヨーテ","グランベリー大平原南","けもののキバ、やじゅうの皮、ひらめきの素",""],
-  ["モンスター","銀冠","ビッググリーンスネーク","グランベリー大平原南","ヘビのウロコ、オオヘビのウロコ、どくのもと",""],
-  ["モンスター","銀冠","キラーベア","グランベリー大平原南","やじゅうの皮、どうぶつのふん、秘島はちみつ、ひらめきの素",""],
-  ["モンスター","銀冠","デカヤマグモ","グランベリー大平原南","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原南","伝説ジャガキング",""],
-  // グランベリー大平原西
-  ["木","金冠","炎のエンジェルツリー","グランベリー大平原西","ファイア古木、ファイア原木、炎のマナ",""],
-  ["モンスター","金冠","イネムリドラゴン","グランベリー大平原西","イネムリの涙、イネムリのウロコ、光の玉、巨大なツノ、けもののキバ、けものの皮、火薬のもと、ドラゴン肉、炎のマナ","ランク6以降"],
-  ["モンスター","金冠","キングバハ・ハ","グランベリー大平原西","羊毛、王様羊毛、ワイルドなツノ、ひらめきの素",""],
-  ["モンスター","金冠","ダークトーストス","グランベリー大平原西","ぶあついこうら、闇の炎、ひらめきの素","ランハートのとりで"],
-  ["モンスター","金冠","ダークデキャロッテ","グランベリー大平原西","まっかニンジン、闇色ニンジン、ニンジン、ひらめきの素","ランハートのとりで"],
-  ["モンスター","金冠","ダークブヒーモス","グランベリー大平原西","ひらめきの素","ランハートのとりで"],
-  ["モンスター","銀冠","ダークパンサー","グランベリー大平原西","かたいツメ、ぶっといキバ、謎の石板、ひらめきの素","ランハートのとりで"],
-  ["モンスター","銀冠","ビッグゴースト","グランベリー大平原西","精霊の粉、魔法の粉、まひのもと","夜"],
-  ["モンスター","銀冠","タウロス","グランベリー大平原西","もうじゅう肉、特濃ミルク、もうぎゅうのツノ",""],
-  ["モンスター","銀冠","デカモロコシ","グランベリー大平原西","とうもろこし、火薬のもと、糸ひも、草糸",""],
-  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原西","伝説ジャガキング",""],
-  // グランベリー大平原東
-  ["モンスター","銀冠","はたらきばちリーダー","グランベリー大平原東","どくのもと、草原はちみつ、巨大なトゲ",""],
-  ["モンスター","銀冠","デカブラ","グランベリー大平原東","あばれダイコン、カブラの葉",""],
-  ["モンスター","銀冠","ブラックパンサー","グランベリー大平原東","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ","夜"],
-  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原東","伝説ジャガキング",""],
-  // ハネビラの森
-  ["木","金冠","仙人桜","ハネビラの森","アンパラベリー、サクラ原木、サクラ古木、サクラの蜜、サクラの切り枝",""],
-  ["魚","金冠","桜花のヌシ","ハネビラの森","桜花のヌシ、花のヌシコケ","ハネビラ大樹海"],
-  ["モンスター","金冠","そうげんドラゴン","ハネビラの森","大草原の涙、光の玉、ドラゴン肉、巨大なツノ","ハネビラ大樹海"],
-  ["モンスター","金冠","ゴールデンベエ","ハネビラの森","高貴なやぎ毛、きんいろやぎ毛、やぎ毛、光の玉","ハネビラ大樹海"],
-  ["モンスター","銀冠","サクラノキモドキ","ハネビラの森","サクラ原木、どくのもと、サクランボ",""],
-  ["モンスター","銀冠","オオムチクサ","ハネビラの森","どくのもと、せいれい草、そせい草、まひのもと",""],
-  ["モンスター","銀冠","ブラックパンサー","ハネビラの森","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ",""],
-  ["モンスター","銀冠","キバザル","ハネビラの森","スターアップル、どくのもと、じょうぶなキバ",""],
-  ["モンスター","銀冠","ビシバシドンベア","ハネビラの森","まじゅうの皮、巨大なキバ、巨大なツメ、ひらめきの素",""],
-  ["モンスター","伝説","伝説ゴッドツリー","ハネビラの森","伝説の神原木",""],
-  // キノココ秘境
-  ["木","金冠","風のエンジェルツリー","キノココ秘境","ウィンド原木、ウィンド古木、風のマナ",""],
-  ["魚","金冠","森のヌシ","キノココ秘境","森のヌシ、森のヌシコケ、さかなのウロコ",""],
-  ["モンスター","金冠","怪鳥ナツココ","キノココ秘境","極彩色の羽毛、怪鳥のオタカラ、怪鳥エッグ、とり肉、ひらめきの素",""],
-  ["モンスター","銀冠","ビッグアップルモンキー","キノココ秘境","どくのもと、王国アップル",""],
-  ["モンスター","銀冠","キバザル","キノココ秘境","スターアップル、どくのもと、じょうぶなキバ",""],
-  ["モンスター","銀冠","オオムチクサ","キノココ秘境","どくのもと、せいれい草、そせい草、まひのもと",""],
-  ["モンスター","銀冠","サクラノキモドキ","キノココ秘境","サクラ原木、どくのもと、サクランボ",""],
-  ["モンスター","伝説","伝説ゴッドツリー","キノココ秘境","伝説の神原木",""],
-  // ツバサキ谷
-  ["岩","金冠","風のスタークリスタル","ツバサキ谷","風のマナ、アクアマリン、ハルカーナ鉄、ウィンドのカケラ、上ミステニア石材",""],
-  ["モンスター","金冠","マルマル","ツバサキ谷","風のマナ、虹鳥の羽毛、とり肉、マルマルエッグ、光の玉",""],
-  ["モンスター","銀冠","ビッグアップルモンキー","ツバサキ谷","どくのもと、王国アップル",""],
-  ["モンスター","銀冠","ビッググリーンスネーク","ツバサキ谷","ヘビのウロコ、オオヘビのウロコ、どくのもと",""],
-  ["モンスター","銀冠","フォレストパンサー","ツバサキ谷","けもののツメ、やじゅうの皮",""],
-  ["モンスター","銀冠","ブラックパンサー","ツバサキ谷","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ",""],
-  ["モンスター","銀冠","アイアンゴーレム","ツバサキ谷","アクアマリン、命のカケラ、ハルカーナ鉄",""],
-  ["モンスター","伝説","伝説ゴッドツリー","ツバサキ谷","伝説の神原木",""],
-  // ドラドロ溶岩地帯
-  ["モンスター","金冠","モヒカンザウルス","ドラドロ溶岩地帯","火薬のもと、炎のマナ、燃えるモヒカン、まじゅうのしっぽ、まじゅうの皮、きょうりゅう肉","昼"],
-  ["モンスター","金冠","ガンモエパンサー","ドラドロ溶岩地帯","まじゅうの皮、炎のマナ、かたいツメ、炎獣のキバ、炎獣のツメ","夜"],
-  ["岩","金冠","ゴーレムストーン","ドラドロ溶岩地帯","ルビー、灼熱鉱、ゴーレムのカケラ、上ハッカ鉱",""],
-  ["魚","金冠","マグマグロ","ドラドロ溶岩地帯","マグマグロ、マグマヒレ",""],
-  ["モンスター","銀冠","オオオガララヘビ","ドラドロ溶岩地帯","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
-  ["モンスター","銀冠","アイアンゴーレム","ドラドロ溶岩地帯","アクアマリン、命のカケラ、ハルカーナ鉄",""],
-  ["モンスター","銀冠","キングコブラ","ドラドロ溶岩地帯","どくのもと、巨大なキバ、オオヘビのウロコ、火薬のもと",""],
-  ["モンスター","銀冠","デカヤマグモ","ドラドロ溶岩地帯","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["岩","金冠","魔王の心臓","ドラドロ溶岩地帯","ブラックオニキス、上ミステニア石材、マオーストーン、マオーハート","エリアチャレンジ"],
-  // セキネツ山地
-  ["岩","金冠","竜の鉤爪","セキネツ山地","上ミステニア石材、ルビー、灼熱鉱、フレイムルビー、古代エメラルド、溶岩の竜王石",""],
-  ["モンスター","金冠","ガンモエパンサー","セキネツ山地","まじゅうの皮、炎のマナ、かたいツメ、炎獣のキバ、炎獣のツメ","夜"],
-  ["木","金冠","地のエンジェルツリー","セキネツ山地","アース古木、アース原木",""],
-  ["モンスター","金冠","イネムリドラゴン","セキネツ山地","イネムリの涙、イネムリのウロコ、光の玉、巨大なツノ、けもののキバ、けものの皮、火薬のもと、ドラゴン肉、炎のマナ","エリアチャレンジ"],
-  ["モンスター","金冠","そうげんドラゴン","セキネツ山地","大草原の涙、光の玉、ドラゴン肉、巨大なツノ","エリアチャレンジ"],
-  ["木","金冠","竜の大樹","セキネツ山地","竜樹の角、竜樹の翼","エリアチャレンジ"],
-  ["モンスター","銀冠","オオオガラヘビ","セキネツ山地","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
-  ["モンスター","銀冠","キングコブラ","セキネツ山地","どくのもと、巨大なキバ、オオヘビのウロコ、火薬のもと",""],
-  ["モンスター","銀冠","デカヤマグモ","セキネツ山地","絹糸、きらめく絹糸","エリアチャレンジ"],
-  // クネック山地
-  ["モンスター","金冠","ロックゴースト","クネック山地","まひのもと、幽体のもと、魔法の粉、精霊の粉、闇の玉、命のカケラ",""],
-  ["モンスター","銀冠","デカヤマグモ","クネック山地","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["モンスター","伝説","伝説ドン・バハ・ハ","クネック山地","伝説ドンホーン、伝説ドンミート",""],
-  // キーバ諸島
-  ["モンスター","金冠","こうてつトーストス","キーバ諸島","こうてつのこうら、闇の玉",""],
-  ["木","金冠","水のエンジェルツリー","キーバ諸島","水のマナ、ウォータ原木、ウォータ古木",""],
-  ["モンスター","銀冠","ブラックボックス","キーバ諸島","秘宝袋、金貨袋、銀貨袋",""],
-  ["モンスター","銀冠","オオウミコロガシムシ","キーバ諸島","不思議な物体、魔法の粉、トロピアン深海水、ひらめきの素",""],
-  ["モンスター","銀冠","デカミツキシャーク","キーバ諸島","じょうぶなキバ、きれいなサンゴ","エリアチャレンジ"],
-  ["魚","金冠","神のヌシ","キーバ諸島","神のヌシ、神のヌシコケ","エリアチャレンジ"],
-  ["魚","金冠","ポセイドンカジキ","キーバ諸島","ポセイドンカジキ、海神のヒレ","エリアチャレンジ"],
-  ["モンスター","金冠","クリスタルゴーレム","キーバ諸島","氷結クリスタル、星のカケラ","ランク6以降"],
-  ["モンスター","伝説","伝説ブットビウオ","キーバ諸島","伝説ブットビウオ",""],
-  // リューノメ山地
-  ["魚","金冠","カジキマグロ","リューノメ山地","カジキマグロ、カジキヒレ",""],
-  ["岩","金冠","水のスタークリスタル","リューノメ山地","アメジスト、ウォータのカケラ、深海鉱、上ミステニア石材",""],
-  ["木","金冠","ジャイアントツリー","リューノメ山地","巨大樹の樹皮、巨大樹の実",""],
-  ["モンスター","銀冠","フラッドコヨーテ","リューノメ山地","けもののキバ、やじゅうの皮、ひらめきの素",""],
-  ["モンスター","銀冠","オオコロガシムシ","リューノメ山地","不思議な物体、きみょうな物体",""],
-  ["モンスター","銀冠","キラーベア","リューノメ山地","やじゅうの皮、どうぶつのふん、秘島はちみつ、ひらめきの素",""],
-  ["モンスター","銀冠","デカヤマグモ","リューノメ山地","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["モンスター","伝説","伝説ドン・バハ・ハ","リューノメ山地","伝説ドンホーン、伝説ドンミート",""],
-  // ノーズン山地
-  ["魚","金冠","レイトウマグロ","ノーズン山地","レイトウマグロ、レイトウウロコ、さかなのウロコ",""],
-  ["岩","金冠","グラスファイト鉱床","ノーズン山地","ブラックオニキス、古代のオーブ、ダークストーン、古代エメラルド、上ミステニア石材",""],
-  ["モンスター","銀冠","どうくつパンサー","ノーズン山地","するどいツメ、まじゅうの皮、じょうぶなキバ",""],
-  ["モンスター","銀冠","オオオガララヘビ","ノーズン山地","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
-  ["モンスター","銀冠","ブラックボックス","ノーズン山地","秘宝袋、金貨袋、銀貨袋","ノーズホール洞窟"],
-  ["モンスター","銀冠","デカヤマグモ","ノーズン山地","絹糸、きらめく絹糸","エリアチャレンジ"],
-  ["モンスター","伝説","伝説ドン・バハ・ハ","ノーズン山地","伝説ドンホーン、伝説ドンミート",""],
-];
-
-const typeClass = { "モンスター": "type-monster", "魚": "type-fish", "岩": "type-rock", "木": "type-tree" };
-const rankClass = { "金冠": "rank-gold", "銀冠": "rank-silver", "伝説": "rank-legend" };
-
-let currentFilter = "all";
-let currentSearch = "";
-let sortCol = -1;
-let sortAsc = true;
-
-function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function highlightText(text, query) {
-  if (!query) return escapeHtml(text);
-  const escaped = escapeHtml(text);
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-  return escaped.replace(regex, '<mark>$1</mark>');
-}
-
-function render() {
-  const tbody = document.getElementById('tbody');
-  const q = currentSearch.toLowerCase();
-
-  let filtered = DATA.filter(row => {
-    if (currentFilter !== "all" && row[0] !== currentFilter) return false;
-    if (q) {
-      const searchable = (row[2] + row[3] + row[4] + row[5]).toLowerCase();
-      return searchable.includes(q);
-    }
-    return true;
-  });
-
-  if (sortCol >= 0) {
-    filtered.sort((a, b) => {
-      const va = a[sortCol], vb = b[sortCol];
-      const cmp = va.localeCompare(vb, 'ja');
-      return sortAsc ? cmp : -cmp;
-    });
-  }
-
-  document.getElementById('stats').textContent = `${filtered.length} 件表示 / 全 ${DATA.length} 件`;
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    document.getElementById('noResults').style.display = '';
-    return;
-  }
-  document.getElementById('noResults').style.display = 'none';
-
-  tbody.innerHTML = filtered.map(row => {
-    const [type, rank, name, area, drops, note] = row;
-    return `<tr>
-      <td><span class="type-badge ${typeClass[type]}">${type}</span></td>
-      <td><span class="rank-badge ${rankClass[rank]}">${rank}</span></td>
-      <td>${highlightText(name, currentSearch)}</td>
-      <td class="area-name">${highlightText(area, currentSearch)}</td>
-      <td class="drop-list">${highlightText(drops, currentSearch)}</td>
-      <td>${note ? highlightText(note, currentSearch) : ''}</td>
-    </tr>`;
-  }).join('');
-}
-
-document.getElementById('search').addEventListener('input', e => {
-  currentSearch = e.target.value.trim();
-  render();
-});
-
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    render();
-  });
-});
-
-document.querySelectorAll('thead th').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = parseInt(th.dataset.col);
-    if (col === 4) return; // don't sort drops
-    if (sortCol === col) { sortAsc = !sortAsc; }
-    else { sortCol = col; sortAsc = true; }
-    document.querySelectorAll('.sort-arrow').forEach(s => s.textContent = '');
-    th.querySelector('.sort-arrow').textContent = sortAsc ? ' ▲' : ' ▼';
-    render();
-  });
-});
-
-render();
-</script>
 </body>
 </html>

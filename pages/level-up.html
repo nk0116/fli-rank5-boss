@@ -63,6 +63,23 @@
   .source a { color: #555; text-decoration: underline; }
   .source a:hover { color: #888; }
 
+  /* Hamburger Menu */
+  .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
+  .hamburger-btn:hover { border-color: #ffd700; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: #ffd700; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .nav-overlay.active { opacity: 1; visibility: visible; }
+  .nav-panel { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel.active { right: 0; }
+  .nav-panel-title { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
+  .nav-link { display: block; padding: 12px 16px; margin-bottom: 4px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.95rem; transition: all 0.2s; }
+  .nav-link:hover { background: #1e2a4a; color: #ffd700; }
+  .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
+  .nav-link-desc { font-size: 0.75rem; color: #666; margin-top: 2px; }
+
   /* Mobile */
   @media (max-width: 600px) {
     body { padding: 12px 8px; }
@@ -81,6 +98,27 @@
 </style>
 </head>
 <body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
+  <div class="nav-panel-title">メニュー</div>
+  <a href="../index.html" class="nav-link">
+    TOP
+    <div class="nav-link-desc">攻略ページ一覧</div>
+  </a>
+  <a href="rank5-boss.html" class="nav-link">
+    ボス一覧
+    <div class="nav-link-desc">エリアランク5以上のボス・ドロップ素材</div>
+  </a>
+  <a href="level-up.html" class="nav-link current">
+    レベル上げ
+    <div class="nav-link-desc">レベル帯別おすすめスポット</div>
+  </a>
+</nav>
 
 <a href="../index.html" class="back-link">&larr; トップに戻る</a>
 <h1>効率的なレベル上げ場所まとめ</h1>
@@ -352,6 +390,27 @@ tabBtns.forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + target).classList.add('active');
   });
+});
+
+// Hamburger Menu
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navOverlay = document.getElementById('navOverlay');
+const navPanel = document.getElementById('navPanel');
+
+function toggleMenu() {
+  const isOpen = navPanel.classList.contains('active');
+  hamburgerBtn.classList.toggle('active');
+  navOverlay.classList.toggle('active');
+  navPanel.classList.toggle('active');
+  hamburgerBtn.setAttribute('aria-expanded', !isOpen);
+  hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+hamburgerBtn.addEventListener('click', toggleMenu);
+navOverlay.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu();
 });
 </script>
 

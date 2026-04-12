@@ -27,9 +27,24 @@
   .game-card-genre { font-size: 0.7rem; background: #ffd70022; color: #ffd700; padding: 3px 10px; border-radius: 12px; border: 1px solid #ffd70033; }
   .game-card-desc { font-size: 0.82rem; color: #888; margin-top: 4px; line-height: 1.5; }
 
-  /* Guide Links inside card */
-  .guide-links { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
-  .guide-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #0f0f1a; border: 1px solid #1e2a4a; border-radius: 8px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
+  /* Accordion Sections */
+  .accordion { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .accordion-section { background: #0f0f1a; border: 1px solid #1e2a4a; border-radius: 10px; overflow: hidden; }
+  .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; transition: background 0.2s; }
+  .accordion-header:hover { background: #1a1a2e; }
+  .accordion-header-left { display: flex; align-items: center; gap: 10px; }
+  .accordion-icon { font-size: 1rem; flex-shrink: 0; width: 24px; text-align: center; }
+  .accordion-title { font-size: 0.88rem; font-weight: 600; color: #fff; }
+  .accordion-count { font-size: 0.68rem; color: #666; margin-left: 6px; }
+  .accordion-chevron { color: #555; font-size: 0.85rem; transition: transform 0.3s; flex-shrink: 0; }
+  .accordion-section.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .accordion-section.open .accordion-body { max-height: 2000px; }
+  .accordion-content { padding: 0 16px 14px; }
+
+  /* Guide Links inside accordion */
+  .guide-links { display: flex; flex-direction: column; gap: 6px; }
+  .guide-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #12122a; border: 1px solid #1e2a4a; border-radius: 8px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
   .guide-link:hover { border-color: #ffd700; background: #1a1a2e; }
   .guide-link-icon { font-size: 1.1rem; flex-shrink: 0; width: 28px; text-align: center; }
   .guide-link-text { flex: 1; }
@@ -43,6 +58,37 @@
   .guide-link--level:hover { border-left-color: #55efc4; }
   .guide-link--top { border-left: 3px solid #3498db; }
   .guide-link--top:hover { border-left-color: #74b9ff; }
+
+  /* Memo */
+  .memo-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .memo-list li { font-size: 0.82rem; color: #ccc; line-height: 1.6; padding: 8px 12px; background: #12122a; border-radius: 6px; border-left: 3px solid #ffd700; }
+
+  /* External Links */
+  .ext-links { display: flex; flex-direction: column; gap: 4px; }
+  .ext-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: #74b9ff; font-size: 0.82rem; border-radius: 6px; transition: background 0.2s; }
+  .ext-link:hover { background: #1a1a2e; color: #a4d4ff; }
+  .ext-link-bullet { color: #555; font-size: 0.7rem; flex-shrink: 0; }
+  .ext-link-domain { font-size: 0.68rem; color: #555; margin-left: auto; flex-shrink: 0; }
+
+  /* Progress Checklist */
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .checklist li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; cursor: pointer; transition: background 0.2s; user-select: none; }
+  .checklist li:hover { background: #1a1a2e; }
+  .checklist-check { width: 20px; height: 20px; border: 2px solid #444; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-size: 0.7rem; color: transparent; }
+  .checklist li.done .checklist-check { background: #ffd700; border-color: #ffd700; color: #1a1a2e; }
+  .checklist-text { font-size: 0.84rem; color: #ccc; }
+  .checklist li.done .checklist-text { color: #666; text-decoration: line-through; }
+  .checklist-chapter { font-size: 0.72rem; color: #888; font-weight: 600; margin-right: 4px; }
+
+  /* Walkthrough */
+  .walkthrough-content { font-size: 0.82rem; color: #ccc; line-height: 1.7; }
+  .walkthrough-content h3 { font-size: 0.9rem; color: #ffd700; margin: 16px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #1e2a4a; }
+  .walkthrough-content h3:first-child { margin-top: 0; }
+  .walkthrough-content ul { list-style: none; padding: 0; }
+  .walkthrough-content ul li { padding: 4px 0 4px 16px; position: relative; cursor: default; }
+  .walkthrough-content ul li::before { content: ''; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; background: #ffd700; border-radius: 50%; }
+  .walkthrough-content ul li:hover { background: transparent; }
+  .walkthrough-content strong { color: #fff; }
 
   /* Hamburger Menu */
   .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
@@ -65,8 +111,12 @@
   @media (max-width: 480px) {
     .site-header h1 { font-size: 1.3rem; }
     .game-card-title { font-size: 1rem; }
+    .game-card { padding: 14px 16px; }
+    .accordion-header { padding: 10px 14px; }
+    .accordion-content { padding: 0 14px 12px; }
     .guide-link { padding: 9px 12px; }
     .guide-link-title { font-size: 0.82rem; }
+    .ext-link { padding: 6px 10px; font-size: 0.78rem; }
   }
 </style>
 </head>
@@ -114,32 +164,237 @@
       </div>
       <div class="game-card-desc">バカデッカーナ大陸の攻略情報まとめ。ボス攻略・レベル上げ効率ガイドなど。</div>
 
-      <div class="guide-links">
-        <a href="pages/fl/index.html" class="guide-link guide-link--top">
-          <div class="guide-link-icon">📖</div>
-          <div class="guide-link-text">
-            <div class="guide-link-title">FL攻略TOP</div>
-            <div class="guide-link-desc">攻略ページの一覧・目次</div>
+      <div class="accordion">
+
+        <!-- セクション: 攻略ページ -->
+        <div class="accordion-section open" data-section="fl-guide-pages">
+          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+            <div class="accordion-header-left">
+              <span class="accordion-icon">📖</span>
+              <span class="accordion-title">攻略ページ</span>
+              <span class="accordion-count">3件</span>
+            </div>
+            <span class="accordion-chevron">▼</span>
           </div>
-          <div class="guide-link-arrow">›</div>
-        </a>
-        <a href="pages/fl/rank5-boss.html" class="guide-link guide-link--boss">
-          <div class="guide-link-icon">⚔️</div>
-          <div class="guide-link-text">
-            <div class="guide-link-title">ボス一覧</div>
-            <div class="guide-link-desc">エリアランク5以上のボス・ドロップ素材まとめ</div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="guide-links">
+                <a href="pages/fl/index.html" class="guide-link guide-link--top">
+                  <div class="guide-link-icon">📖</div>
+                  <div class="guide-link-text">
+                    <div class="guide-link-title">FL攻略TOP</div>
+                    <div class="guide-link-desc">攻略ページの一覧・目次</div>
+                  </div>
+                  <div class="guide-link-arrow">›</div>
+                </a>
+                <a href="pages/fl/rank5-boss.html" class="guide-link guide-link--boss">
+                  <div class="guide-link-icon">⚔️</div>
+                  <div class="guide-link-text">
+                    <div class="guide-link-title">ボス一覧</div>
+                    <div class="guide-link-desc">エリアランク5以上のボス・ドロップ素材まとめ</div>
+                  </div>
+                  <div class="guide-link-arrow">›</div>
+                </a>
+                <a href="pages/fl/level-up.html" class="guide-link guide-link--level">
+                  <div class="guide-link-icon">📈</div>
+                  <div class="guide-link-text">
+                    <div class="guide-link-title">レベル上げ効率ガイド</div>
+                    <div class="guide-link-desc">レベル帯別おすすめスポット・経験値効率</div>
+                  </div>
+                  <div class="guide-link-arrow">›</div>
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="guide-link-arrow">›</div>
-        </a>
-        <a href="pages/fl/level-up.html" class="guide-link guide-link--level">
-          <div class="guide-link-icon">📈</div>
-          <div class="guide-link-text">
-            <div class="guide-link-title">レベル上げ効率ガイド</div>
-            <div class="guide-link-desc">レベル帯別おすすめスポット・経験値効率</div>
+        </div>
+
+        <!-- セクション: メモ -->
+        <div class="accordion-section open" data-section="fl-memo">
+          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+            <div class="accordion-header-left">
+              <span class="accordion-icon">📝</span>
+              <span class="accordion-title">メモ</span>
+              <span class="accordion-count">4件</span>
+            </div>
+            <span class="accordion-chevron">▼</span>
           </div>
-          <div class="guide-link-arrow">›</div>
-        </a>
-      </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <ul class="memo-list">
+                <li>ライフレベルを上げたい</li>
+                <li>SPの回復方法について知りたい（薬を使う以外の方法）</li>
+                <li>スキルボードの経験値増加などは他のライフにも影響するか</li>
+                <li>使用中のライフ: 戦闘ライフは狩人、生産・野菜種ライフは全般使用中</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- セクション: リンク集 -->
+        <div class="accordion-section open" data-section="fl-links">
+          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+            <div class="accordion-header-left">
+              <span class="accordion-icon">🔗</span>
+              <span class="accordion-title">リンク集</span>
+              <span class="accordion-count">13件</span>
+            </div>
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="ext-links">
+                <a href="https://game8.jp/fantasylife-i" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>攻略Wiki（Game8）<span class="ext-link-domain">game8.jp</span>
+                </a>
+                <a href="https://altema.jp/fantasylifei/story" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>ストーリー攻略チャート（アルテマ）<span class="ext-link-domain">altema.jp</span>
+                </a>
+                <a href="https://gamewith.jp/fantasylife-i/" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>攻略まとめ（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+                </a>
+                <a href="https://gamecap.jp/fantasylife_i/chart.html" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>攻略チャート（gamecap）<span class="ext-link-domain">gamecap.jp</span>
+                </a>
+                <a href="https://game8.jp/fantasylife-i/688666" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>回復のやり方（Game8）<span class="ext-link-domain">game8.jp</span>
+                </a>
+                <a href="https://gamewith.jp/fantasylife-i/499183" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>回復のやり方（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+                </a>
+                <a href="https://game8.jp/fantasylife-i/691390" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>スキルボードおすすめ（Game8）<span class="ext-link-domain">game8.jp</span>
+                </a>
+                <a href="https://altema.jp/fantasylifei/skillpoint" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>スキルポイント稼ぎ（アルテマ）<span class="ext-link-domain">altema.jp</span>
+                </a>
+                <a href="https://gamewith.jp/fantasylife-i/497350" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>狩人のスキル振り・装備（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+                </a>
+                <a href="https://game8.jp/fantasylife-i/688510" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>狩人の装備・立ち回り（Game8）<span class="ext-link-domain">game8.jp</span>
+                </a>
+                <a href="https://altema.jp/fantasylifei/saikyosoubi" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>最強装備まとめ（アルテマ）<span class="ext-link-domain">altema.jp</span>
+                </a>
+                <a href="https://chi-tara.com/fli_bakusoku/" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>制作ライフ爆速レベル上げ<span class="ext-link-domain">chi-tara.com</span>
+                </a>
+                <a href="https://gamewith.jp/fantasylife-i/497657" class="ext-link" target="_blank" rel="noopener">
+                  <span class="ext-link-bullet">●</span>レベル上げ効率（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- セクション: 進捗チェックリスト -->
+        <div class="accordion-section open" data-section="fl-progress">
+          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+            <div class="accordion-header-left">
+              <span class="accordion-icon">✅</span>
+              <span class="accordion-title">進捗チェックリスト</span>
+              <span class="accordion-count" id="progressCount">3/7</span>
+            </div>
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <ul class="checklist" id="progressChecklist">
+                <li class="done" data-index="0">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第1章</span>上陸！謎めく島ライフ</span>
+                </li>
+                <li class="done" data-index="1">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第2章</span>千年の時を超えて</span>
+                </li>
+                <li class="done" data-index="2">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第3章</span>ヒミツの時の採掘</span>
+                </li>
+                <li data-index="3">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第4章</span>オバケ野菜と精霊の歌</span>
+                </li>
+                <li data-index="4">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第5章</span>アートでヒートなお宝探し</span>
+                </li>
+                <li data-index="5">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第6章</span>試練の島に挑む者</span>
+                </li>
+                <li data-index="6">
+                  <span class="checklist-check">✓</span>
+                  <span class="checklist-text"><span class="checklist-chapter">第7章</span>未来をかけた歯車決戦</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- セクション: 攻略情報 -->
+        <div class="accordion-section open" data-section="fl-walkthrough">
+          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+            <div class="accordion-header-left">
+              <span class="accordion-icon">⚔️</span>
+              <span class="accordion-title">攻略情報</span>
+            </div>
+            <span class="accordion-chevron">▼</span>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="walkthrough-content">
+                <h3>おすすめ装備（4章・狩人向け）</h3>
+                <ul>
+                  <li><strong>武器（弓）</strong>: 「コニファーの弓」が現時点のおすすめ。いっぱしランクアップ時や王都横のデカモロコシからドロップ</li>
+                  <li><strong>次の目標武器</strong>: 5章到達後に「シュガーの弓」（トロピアン諸島・ヨホホイ洞窟のボスドロップ）</li>
+                  <li><strong>防具</strong>: 現時点は店売り最強を装備。5章到達後に「伝統舞踊装備」+「ナツココブーツ」をピッカソンリゾートで購入</li>
+                  <li><strong>アクセサリー</strong>: 経験値アップ・移動速度アップ系を優先</li>
+                  <li><strong>武器の追加効果</strong>: 「属性ダメージアップ」「チャージ技ダメージアップ」が狩人と相性◎</li>
+                  <li><strong>チャージ短縮</strong>: 状態異常付与の効率が上がるので最優先で厳選</li>
+                </ul>
+
+                <h3>生産系ライフのレベル上げのコツ</h3>
+                <ul>
+                  <li><strong>経験値アップスキル</strong>: スキルボードで「経験値アップ」を最優先で取る（リセット可能なので気にせずOK）</li>
+                  <li><strong>経験値アップメガネ</strong>: パーティ4人全員分を揃えると効率大幅UP</li>
+                  <li><strong>素材の一括購入</strong>: 拠点ランクを上げてマールショップで素材をまとめ買い</li>
+                  <li><strong>錬金術師は「スーパーエイド」制作</strong>: 1本で約3万EXP、破格の効率</li>
+                  <li><strong>金策</strong>: 大穴三層の金冠8連周回で資金を確保</li>
+                </ul>
+
+                <h3>SP回復方法（薬以外）</h3>
+                <ul>
+                  <li><strong>焚き火で休む</strong>: 各地にある焚き火で寝るとSP回復できる</li>
+                  <li><strong>宿屋で休む</strong>: 10リッチで体力・SP回復</li>
+                  <li><strong>レベルアップ</strong>: レベルが上がるとHP・SP全回復</li>
+                  <li><strong>魔法使いのR1</strong>: 魔法使いはR1長押しでSPが徐々に回復</li>
+                  <li><strong>生産職の仲間</strong>: パーティに生産職がいるとHP・SPを継続回復してくれる</li>
+                </ul>
+
+                <h3>スキルボードの経験値増加について</h3>
+                <ul>
+                  <li><strong>ライフごとに独立</strong>: 経験値増加スキルはそのライフでのみ有効</li>
+                  <li><strong>他ライフには影響しない</strong>: 木こりで取った「経験値UP」は木こり中だけ</li>
+                  <li><strong>スキルポイントも独立</strong>: 各ライフで稼いだSPは他ライフでは使えない</li>
+                  <li><strong>間接的な活用</strong>: 経験値UP装備をパーティ全員に付けると効率UP</li>
+                </ul>
+
+                <h3>第4章 攻略ポイント（ネタバレ控えめ）</h3>
+                <ul>
+                  <li>精霊の歌に関するクエストを中心に進行</li>
+                  <li>農場・料理系ライフが活躍する場面あり</li>
+                  <li>ボス戦に備えてレベル上げと装備強化を推奨</li>
+                  <li>戦闘ライフのランクを「熟練」以上に上げておく</li>
+                  <li>回復アイテムを多めに用意</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.accordion -->
     </div>
   </div>
 </div>
@@ -165,6 +420,114 @@ navOverlay.addEventListener('click', toggleMenu);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu();
 });
+
+// ===== Accordion Toggle with localStorage =====
+const ACCORDION_STORAGE_KEY = 'gamelog-accordion-state';
+
+function loadAccordionState() {
+  try {
+    const saved = localStorage.getItem(ACCORDION_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  } catch { return null; }
+}
+
+function saveAccordionState() {
+  const state = {};
+  document.querySelectorAll('.accordion-section').forEach(section => {
+    const key = section.dataset.section;
+    if (key) state[key] = section.classList.contains('open');
+  });
+  localStorage.setItem(ACCORDION_STORAGE_KEY, JSON.stringify(state));
+}
+
+function initAccordions() {
+  const saved = loadAccordionState();
+  const sections = document.querySelectorAll('.accordion-section');
+
+  sections.forEach(section => {
+    const key = section.dataset.section;
+    const header = section.querySelector('.accordion-header');
+
+    // Restore saved state (default: open)
+    if (saved && key in saved) {
+      if (saved[key]) {
+        section.classList.add('open');
+      } else {
+        section.classList.remove('open');
+      }
+    }
+
+    // Update aria
+    header.setAttribute('aria-expanded', section.classList.contains('open'));
+
+    // Click handler
+    header.addEventListener('click', () => {
+      section.classList.toggle('open');
+      header.setAttribute('aria-expanded', section.classList.contains('open'));
+      saveAccordionState();
+    });
+
+    // Keyboard handler
+    header.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        header.click();
+      }
+    });
+  });
+}
+
+initAccordions();
+
+// ===== Progress Checklist with localStorage =====
+const PROGRESS_STORAGE_KEY = 'gamelog-fl-progress';
+
+// Default progress from games.json
+const defaultProgress = [true, true, true, false, false, false, false];
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [...defaultProgress];
+  } catch { return [...defaultProgress]; }
+}
+
+function saveProgress(progress) {
+  localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+}
+
+function updateProgressCount(progress) {
+  const done = progress.filter(v => v).length;
+  const total = progress.length;
+  const countEl = document.getElementById('progressCount');
+  if (countEl) countEl.textContent = done + '/' + total;
+}
+
+function initChecklist() {
+  const progress = loadProgress();
+  const items = document.querySelectorAll('#progressChecklist li');
+
+  items.forEach((item, i) => {
+    // Apply saved state
+    if (progress[i]) {
+      item.classList.add('done');
+    } else {
+      item.classList.remove('done');
+    }
+
+    // Click to toggle
+    item.addEventListener('click', () => {
+      progress[i] = !progress[i];
+      item.classList.toggle('done');
+      saveProgress(progress);
+      updateProgressCount(progress);
+    });
+  });
+
+  updateProgressCount(progress);
+}
+
+initChecklist();
 </script>
 </body>
 </html>

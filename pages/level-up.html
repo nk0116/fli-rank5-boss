@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ファンタジーライフi - 効率的なレベル上げ場所まとめ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 8px; font-size: 1.4rem; color: #ffd700; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+  .back-link { display: inline-block; margin-bottom: 16px; color: #74b9ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { color: #ffd700; }
+
+  /* Tab Navigation */
+  .tab-nav { max-width: 800px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .tab-btn { padding: 8px 18px; border: 1px solid #444; border-radius: 20px; background: #16213e; color: #ccc; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .tab-btn:hover { border-color: #ffd700; color: #ffd700; }
+  .tab-btn.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; font-weight: bold; }
+
+  /* Section */
+  .section { max-width: 800px; margin: 0 auto 28px; }
+  .section-title { font-size: 1.1rem; color: #ffd700; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e2a4a; }
+
+  /* Level Range Cards */
+  .level-card { background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; transition: all 0.2s; }
+  .level-card:hover { border-color: #ffd70066; }
+  .level-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .level-badge { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; }
+  .badge-early { background: #27ae6033; color: #55efc4; border: 1px solid #27ae6055; }
+  .badge-mid { background: #3498db33; color: #74b9ff; border: 1px solid #3498db55; }
+  .badge-late { background: #f39c1233; color: #ffeaa7; border: 1px solid #f39c1255; }
+  .badge-endgame { background: #e74c3c33; color: #ff6b6b; border: 1px solid #e74c3c55; }
+  .badge-final { background: #9b59b633; color: #d6a3ff; border: 1px solid #9b59b655; }
+  .level-range { font-size: 1rem; font-weight: bold; color: #fff; }
+  .level-location { font-size: 0.9rem; color: #74b9ff; margin-bottom: 6px; }
+  .level-desc { font-size: 0.85rem; color: #bbb; line-height: 1.6; }
+  .level-desc strong { color: #ffeaa7; }
+  .level-tips { margin-top: 8px; padding-top: 8px; border-top: 1px solid #1e2a4a; }
+  .level-tips li { font-size: 0.82rem; color: #aaa; margin-left: 16px; line-height: 1.6; }
+
+  /* Tips Section */
+  .tip-card { background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; }
+  .tip-card-title { font-size: 0.9rem; font-weight: bold; color: #fff; margin-bottom: 6px; }
+  .tip-card-body { font-size: 0.82rem; color: #aaa; line-height: 1.6; }
+  .tip-card-body li { margin-left: 16px; margin-bottom: 4px; }
+
+  /* EXP Boost Table */
+  .table-wrap { max-width: 800px; margin: 0 auto 28px; overflow-x: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+  table { width: 100%; border-collapse: collapse; background: #16213e; }
+  thead th { background: #0f3460; color: #ffd700; padding: 12px 10px; text-align: left; font-size: 0.85rem; }
+  tbody tr { border-bottom: 1px solid #1e2a4a; transition: background 0.15s; }
+  tbody tr:hover { background: #1e2a4a; }
+  tbody td { padding: 10px; font-size: 0.85rem; vertical-align: top; }
+  .highlight { color: #ffeaa7; font-weight: bold; }
+
+  /* Tab Content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Source */
+  .source { max-width: 800px; margin: 20px auto 0; text-align: right; font-size: 0.75rem; color: #555; }
+  .source a { color: #555; text-decoration: underline; }
+  .source a:hover { color: #888; }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    body { padding: 12px 8px; }
+    .tab-btn { font-size: 0.75rem; padding: 6px 12px; }
+    .level-header { gap: 6px; }
+    .level-range { font-size: 0.9rem; }
+    table, thead, tbody, th, td, tr { display: block; }
+    thead { display: none; }
+    tbody tr { margin-bottom: 10px; background: #16213e; border-radius: 8px; border: 1px solid #1e2a4a; padding: 12px; }
+    tbody td { padding: 3px 0; border: none; font-size: 0.82rem; }
+    tbody td:first-child { font-weight: bold; color: #fff; margin-bottom: 4px; }
+    tbody td:nth-child(2) { color: #ffeaa7; }
+    tbody td:nth-child(2)::before { content: "効果: "; color: #888; }
+    tbody td:nth-child(3)::before { content: "詳細: "; color: #888; }
+  }
+</style>
+</head>
+<body>
+
+<a href="../index.html" class="back-link">&larr; トップに戻る</a>
+<h1>効率的なレベル上げ場所まとめ</h1>
+<p class="subtitle">レベル帯別おすすめスポット & 経験値稼ぎのコツ</p>
+
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="combat">戦闘職</button>
+  <button class="tab-btn" data-tab="gather">採取職</button>
+  <button class="tab-btn" data-tab="craft">制作職</button>
+  <button class="tab-btn" data-tab="exp-boost">経験値UP手段</button>
+</div>
+
+<!-- 戦闘職 -->
+<div class="tab-content active" id="tab-combat">
+  <div class="section">
+    <h2 class="section-title">戦闘職のレベル上げ場所</h2>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-early">序盤</span>
+        <span class="level-range">Lv1 ~ 25</span>
+      </div>
+      <div class="level-location">バカデッカーナ大陸 各エリア</div>
+      <div class="level-desc">
+        塔を見つけてマップを開放しながら、倒せる敵を倒して経験値を稼ぐ。探索と並行してレベルを上げられるため効率的。<strong>自分より10~20レベル高い敵</strong>を狙うと経験値が多い。
+      </div>
+      <ul class="level-tips">
+        <li>ボスは高確率で宝箱を落とすので装備集め・金策も同時にできる</li>
+        <li>倒せるボスを見つけたら繰り返し周回する</li>
+      </ul>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-mid">中盤</span>
+        <span class="level-range">Lv25 ~ 40</span>
+      </div>
+      <div class="level-location">トロピアン諸島 / ヨホホイ洞窟</div>
+      <div class="level-desc">
+        ボスの近くにファストトラベルできるため周回効率が高い。南西の<strong>ヨホホイ洞窟</strong>内も合わせて多くのボスが出現するため、連続して経験値を稼げる。
+      </div>
+      <ul class="level-tips">
+        <li>ファストトラベルポイントからボスまでの距離が近い</li>
+        <li>複数のボスを1ルートで回れる</li>
+      </ul>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-late">中盤~終盤</span>
+        <span class="level-range">Lv40 ~ 50</span>
+      </div>
+      <div class="level-location">試練の洞窟 B4</div>
+      <div class="level-desc">
+        非常に多くの<strong>銀冠ボス</strong>が出現し、中央には金冠ボス<strong>「いねむりドラゴン」</strong>もいる。構造的に周回しやすく、効率よくレベルを上げられる。ストーリー6章で解放。
+      </div>
+      <ul class="level-tips">
+        <li>銀冠ボスが密集しているため1周あたりの経験値が多い</li>
+        <li>金冠ボスも狙えるので高経験値を得やすい</li>
+      </ul>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-endgame">終盤</span>
+        <span class="level-range">Lv50 ~ 60</span>
+      </div>
+      <div class="level-location">ツバサキ谷（バカデッカーナ北東）</div>
+      <div class="level-desc">
+        出現するボスの数が多い。<strong>エリアランクを上げる</strong>ことで出現する敵のレベルも上がるため、最終的に非常に効率が良くなる。
+      </div>
+      <ul class="level-tips">
+        <li>エリアランク上昇で敵レベルも上昇する仕組みを活用</li>
+        <li>ボス数が多いため周回ルートを組みやすい</li>
+      </ul>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-endgame">終盤</span>
+        <span class="level-range">Lv60 ~ 80</span>
+      </div>
+      <div class="level-location">ガチャダンツリー 800年前以上</div>
+      <div class="level-desc">
+        ストーリー4章で解放。ステージクリアで10年ずつ下の階層に進む。800年前以上の階層では<strong>Lv90超えの敵</strong>が出現し、非常に多くの経験値を得られる。
+      </div>
+      <ul class="level-tips">
+        <li>4章クリア後にアクセス可能</li>
+        <li>階層が深いほど敵レベルが高く、経験値も増加</li>
+      </ul>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-final">最終</span>
+        <span class="level-range">Lv80 ~ 100</span>
+      </div>
+      <div class="level-location">ガチャダンツリー 900年台 モンスターハウス</div>
+      <div class="level-desc">
+        狭い部屋だけで<strong>経験値100万以上</strong>をすぐに稼げる最高効率スポット。謎の石板も大量に集められる。
+      </div>
+      <ul class="level-tips">
+        <li>モンスターハウスの敵を<strong>1~2匹残して</strong>わざと戦闘不能になり「あきらめる」でリタイアすると何度でも再挑戦可能</li>
+        <li>全て倒すとクリア判定になり再戦不可になるので注意</li>
+        <li>謎の石板も同時に集められる</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 採取職 -->
+<div class="tab-content" id="tab-gather">
+  <div class="section">
+    <h2 class="section-title">採取職のレベル上げ方法</h2>
+
+    <div class="tip-card">
+      <div class="tip-card-title">基本方針</div>
+      <div class="tip-card-body">
+        <ul>
+          <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
+          <li>強いライフ道具を装備してレベル差を埋める</li>
+          <li>採掘師の仲間を2人以上連れて自動で採掘させると効率UP</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-early">序盤~中盤</span>
+      </div>
+      <div class="level-location">各エリアの採取ポイント</div>
+      <div class="level-desc">
+        ストーリー進行に合わせて新エリアの採取ポイントを回る。仲間に採取系ライフを持たせておくと自動で手伝ってくれる。
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-late">中盤~終盤</span>
+      </div>
+      <div class="level-location">ワコイの祠 周回</div>
+      <div class="level-desc">
+        仲間に採取させながら効率よくレベルを上げられるスポット。
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-endgame">終盤</span>
+      </div>
+      <div class="level-location">農家: ミドリーナ台地</div>
+      <div class="level-desc">
+        農家のレベル上げに最高効率のエリア。エリアランク上昇も活用する。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 制作職 -->
+<div class="tab-content" id="tab-craft">
+  <div class="section">
+    <h2 class="section-title">制作職のレベル上げ方法</h2>
+
+    <div class="tip-card">
+      <div class="tip-card-title">基本方針</div>
+      <div class="tip-card-body">
+        <ul>
+          <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
+          <li>制作できる最高レベルのアイテムを繰り返し作る</li>
+          <li>素材集めは仲間に任せて効率化</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-early">序盤~中盤</span>
+      </div>
+      <div class="level-location">各街の制作台</div>
+      <div class="level-desc">
+        その時点で作れる最もレベルの高いアイテムを制作して経験値を稼ぐ。レシピのレベルが自分に近いほど経験値が多い。
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-header">
+        <span class="level-badge badge-endgame">終盤</span>
+      </div>
+      <div class="level-location">伝説武器 / 星5装備の制作・打ち直し</div>
+      <div class="level-desc">
+        終盤は<strong>伝説武器や星5装備</strong>の制作・打ち直しが最も経験値効率が良い。素材確保が大変だが1回あたりの経験値が非常に高い。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 経験値UP手段 -->
+<div class="tab-content" id="tab-exp-boost">
+  <div class="section">
+    <h2 class="section-title">経験値を増やす方法</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>効果</th>
+            <th>詳細</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>チョウチョのチャーム</td>
+            <td class="highlight">+10%</td>
+            <td>早期/予約特典で入手できるアクセサリ。獲得経験値を10%上昇させる</td>
+          </tr>
+          <tr>
+            <td>メガネスキル</td>
+            <td class="highlight">最大+80%</td>
+            <td>メガネに付くスキルで経験値UP。仲間の装備も効果が重複するため、全員にメガネを装備させると大幅に上昇</td>
+          </tr>
+          <tr>
+            <td>スキルボード「経験値アップ」</td>
+            <td class="highlight">可変</td>
+            <td>採取職・制作職は習得しやすい。戦闘職は王国兵士と魔法使いのみ習得可能。スキルボードはリセットできるため、レベル上げ後に付け替え可能</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-title">レベル上げの基本テクニック</div>
+      <div class="tip-card-body">
+        <ul>
+          <li><strong>自分より10~20レベル高い敵</strong>を狙う（経験値が大幅に増加）</li>
+          <li>ボスは高確率で宝箱を落とすので<strong>装備集め・金策</strong>を同時に行える</li>
+          <li>ガチャダンのモンスターハウスリタマラ時は<strong>必ず1~2匹残す</strong>（全滅させるとクリア判定で再戦不可）</li>
+          <li>スキルボードはリセット可能なので、レベル上げ中だけ「経験値アップ」を取るのもあり</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <div class="tip-card-title">注意事項</div>
+      <div class="tip-card-body">
+        <ul>
+          <li>レベル上限は<strong>100</strong></li>
+          <li>レベルは<strong>ライフごとに個別</strong>に設定されているため、それぞれ別々に上げる必要がある</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="source">
+  出典: <a href="https://gamewith.jp/fantasylife-i/497657" target="_blank" rel="noopener">GameWith</a>
+</div>
+
+<script>
+// Tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabContents.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + target).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

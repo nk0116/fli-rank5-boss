@@ -18,17 +18,33 @@
   /* Section Title */
   .section-heading { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
 
-  /* Game Cards (Portal Top) */
+  /* ===== Screen Management ===== */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ===== List Screen: Game Cards ===== */
   .game-grid { display: flex; flex-direction: column; gap: 14px; }
-  .game-card { display: block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 12px; padding: 18px 20px; text-decoration: none; color: #e0e0e0; }
-  .game-card:hover { border-color: #1e2a4a; }
+  .game-card { display: block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 12px; padding: 18px 20px; text-decoration: none; color: #e0e0e0; cursor: pointer; transition: all 0.2s; }
+  .game-card:hover { border-color: #ffd70066; background: #1a2340; }
+  .game-card:active { transform: scale(0.98); }
   .game-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .game-card-title { font-size: 1.1rem; font-weight: bold; color: #fff; }
   .game-card-genre { font-size: 0.7rem; background: #ffd70022; color: #ffd700; padding: 3px 10px; border-radius: 12px; border: 1px solid #ffd70033; }
   .game-card-desc { font-size: 0.82rem; color: #888; margin-top: 4px; line-height: 1.5; }
+  .game-card-arrow { color: #555; font-size: 1.2rem; margin-left: 8px; flex-shrink: 0; transition: color 0.2s; }
+  .game-card:hover .game-card-arrow { color: #ffd700; }
+
+  /* ===== Detail Screen: Back Button ===== */
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; margin-bottom: 18px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; color: #ffd700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .back-btn:hover { border-color: #ffd700; background: #1a2340; }
+  .back-btn-icon { font-size: 1rem; }
+
+  .detail-game-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .detail-game-title { font-size: 1.2rem; font-weight: bold; color: #fff; }
+  .detail-game-genre { font-size: 0.7rem; background: #ffd70022; color: #ffd700; padding: 3px 10px; border-radius: 12px; border: 1px solid #ffd70033; }
 
   /* Accordion Sections */
-  .accordion { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .accordion { display: flex; flex-direction: column; gap: 8px; }
   .accordion-section { background: #0f0f1a; border: 1px solid #1e2a4a; border-radius: 10px; overflow: hidden; }
   .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; transition: background 0.2s; }
   .accordion-header:hover { background: #1a1a2e; }
@@ -108,10 +124,18 @@
   .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
   .nav-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
 
+  /* Screen transition animation */
+  .screen { animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   @media (max-width: 480px) {
     .site-header h1 { font-size: 1.3rem; }
     .game-card-title { font-size: 1rem; }
     .game-card { padding: 14px 16px; }
+    .detail-game-title { font-size: 1.05rem; }
     .accordion-header { padding: 10px 14px; }
     .accordion-content { padding: 0 14px 12px; }
     .guide-link { padding: 9px 12px; }
@@ -129,7 +153,7 @@
 <div class="nav-overlay" id="navOverlay"></div>
 <nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
   <div class="nav-panel-title">GameLog</div>
-  <a href="index.html" class="nav-link current">
+  <a href="index.html" class="nav-link current" data-nav="home">
     ポータルTOP
     <div class="nav-link-desc">ゲーム一覧</div>
   </a>
@@ -153,253 +177,326 @@
   <p class="subtitle">ゲーム攻略ポータル</p>
 </header>
 
-<div class="container">
-  <div class="section-heading">ゲーム一覧</div>
-  <div class="game-grid">
-    <!-- FL攻略カード -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <span class="game-card-title">ファンタジーライフi</span>
-        <span class="game-card-genre">アクションRPG</span>
+<!-- ===== Screen: Game List ===== -->
+<div class="screen active" id="screenList">
+  <div class="container">
+    <div class="section-heading">ゲーム一覧</div>
+    <div class="game-grid">
+      <div class="game-card" data-game="fl" role="button" tabindex="0" aria-label="ファンタジーライフi の詳細を表示">
+        <div class="game-card-header">
+          <span class="game-card-title">ファンタジーライフi</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="game-card-genre">アクションRPG</span>
+            <span class="game-card-arrow">›</span>
+          </div>
+        </div>
+        <div class="game-card-desc">バカデッカーナ大陸の攻略情報まとめ。ボス攻略・レベル上げ効率ガイドなど。</div>
       </div>
-      <div class="game-card-desc">バカデッカーナ大陸の攻略情報まとめ。ボス攻略・レベル上げ効率ガイドなど。</div>
-
-      <div class="accordion">
-
-        <!-- セクション: 攻略ページ -->
-        <div class="accordion-section open" data-section="fl-guide-pages">
-          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
-            <div class="accordion-header-left">
-              <span class="accordion-icon">📖</span>
-              <span class="accordion-title">攻略ページ</span>
-              <span class="accordion-count">3件</span>
-            </div>
-            <span class="accordion-chevron">▼</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-content">
-              <div class="guide-links">
-                <a href="pages/fl/index.html" class="guide-link guide-link--top">
-                  <div class="guide-link-icon">📖</div>
-                  <div class="guide-link-text">
-                    <div class="guide-link-title">FL攻略TOP</div>
-                    <div class="guide-link-desc">攻略ページの一覧・目次</div>
-                  </div>
-                  <div class="guide-link-arrow">›</div>
-                </a>
-                <a href="pages/fl/rank5-boss.html" class="guide-link guide-link--boss">
-                  <div class="guide-link-icon">⚔️</div>
-                  <div class="guide-link-text">
-                    <div class="guide-link-title">ボス一覧</div>
-                    <div class="guide-link-desc">エリアランク5以上のボス・ドロップ素材まとめ</div>
-                  </div>
-                  <div class="guide-link-arrow">›</div>
-                </a>
-                <a href="pages/fl/level-up.html" class="guide-link guide-link--level">
-                  <div class="guide-link-icon">📈</div>
-                  <div class="guide-link-text">
-                    <div class="guide-link-title">レベル上げ効率ガイド</div>
-                    <div class="guide-link-desc">レベル帯別おすすめスポット・経験値効率</div>
-                  </div>
-                  <div class="guide-link-arrow">›</div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- セクション: メモ -->
-        <div class="accordion-section open" data-section="fl-memo">
-          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
-            <div class="accordion-header-left">
-              <span class="accordion-icon">📝</span>
-              <span class="accordion-title">メモ</span>
-              <span class="accordion-count">4件</span>
-            </div>
-            <span class="accordion-chevron">▼</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-content">
-              <ul class="memo-list">
-                <li>ライフレベルを上げたい</li>
-                <li>SPの回復方法について知りたい（薬を使う以外の方法）</li>
-                <li>スキルボードの経験値増加などは他のライフにも影響するか</li>
-                <li>使用中のライフ: 戦闘ライフは狩人、生産・野菜種ライフは全般使用中</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- セクション: リンク集 -->
-        <div class="accordion-section open" data-section="fl-links">
-          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
-            <div class="accordion-header-left">
-              <span class="accordion-icon">🔗</span>
-              <span class="accordion-title">リンク集</span>
-              <span class="accordion-count">13件</span>
-            </div>
-            <span class="accordion-chevron">▼</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-content">
-              <div class="ext-links">
-                <a href="https://game8.jp/fantasylife-i" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>攻略Wiki（Game8）<span class="ext-link-domain">game8.jp</span>
-                </a>
-                <a href="https://altema.jp/fantasylifei/story" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>ストーリー攻略チャート（アルテマ）<span class="ext-link-domain">altema.jp</span>
-                </a>
-                <a href="https://gamewith.jp/fantasylife-i/" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>攻略まとめ（GameWith）<span class="ext-link-domain">gamewith.jp</span>
-                </a>
-                <a href="https://gamecap.jp/fantasylife_i/chart.html" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>攻略チャート（gamecap）<span class="ext-link-domain">gamecap.jp</span>
-                </a>
-                <a href="https://game8.jp/fantasylife-i/688666" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>回復のやり方（Game8）<span class="ext-link-domain">game8.jp</span>
-                </a>
-                <a href="https://gamewith.jp/fantasylife-i/499183" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>回復のやり方（GameWith）<span class="ext-link-domain">gamewith.jp</span>
-                </a>
-                <a href="https://game8.jp/fantasylife-i/691390" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>スキルボードおすすめ（Game8）<span class="ext-link-domain">game8.jp</span>
-                </a>
-                <a href="https://altema.jp/fantasylifei/skillpoint" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>スキルポイント稼ぎ（アルテマ）<span class="ext-link-domain">altema.jp</span>
-                </a>
-                <a href="https://gamewith.jp/fantasylife-i/497350" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>狩人のスキル振り・装備（GameWith）<span class="ext-link-domain">gamewith.jp</span>
-                </a>
-                <a href="https://game8.jp/fantasylife-i/688510" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>狩人の装備・立ち回り（Game8）<span class="ext-link-domain">game8.jp</span>
-                </a>
-                <a href="https://altema.jp/fantasylifei/saikyosoubi" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>最強装備まとめ（アルテマ）<span class="ext-link-domain">altema.jp</span>
-                </a>
-                <a href="https://chi-tara.com/fli_bakusoku/" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>制作ライフ爆速レベル上げ<span class="ext-link-domain">chi-tara.com</span>
-                </a>
-                <a href="https://gamewith.jp/fantasylife-i/497657" class="ext-link" target="_blank" rel="noopener">
-                  <span class="ext-link-bullet">●</span>レベル上げ効率（GameWith）<span class="ext-link-domain">gamewith.jp</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- セクション: 進捗チェックリスト -->
-        <div class="accordion-section open" data-section="fl-progress">
-          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
-            <div class="accordion-header-left">
-              <span class="accordion-icon">✅</span>
-              <span class="accordion-title">進捗チェックリスト</span>
-              <span class="accordion-count" id="progressCount">3/7</span>
-            </div>
-            <span class="accordion-chevron">▼</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-content">
-              <ul class="checklist" id="progressChecklist">
-                <li class="done" data-index="0">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第1章</span>上陸！謎めく島ライフ</span>
-                </li>
-                <li class="done" data-index="1">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第2章</span>千年の時を超えて</span>
-                </li>
-                <li class="done" data-index="2">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第3章</span>ヒミツの時の採掘</span>
-                </li>
-                <li data-index="3">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第4章</span>オバケ野菜と精霊の歌</span>
-                </li>
-                <li data-index="4">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第5章</span>アートでヒートなお宝探し</span>
-                </li>
-                <li data-index="5">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第6章</span>試練の島に挑む者</span>
-                </li>
-                <li data-index="6">
-                  <span class="checklist-check">✓</span>
-                  <span class="checklist-text"><span class="checklist-chapter">第7章</span>未来をかけた歯車決戦</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- セクション: 攻略情報 -->
-        <div class="accordion-section open" data-section="fl-walkthrough">
-          <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
-            <div class="accordion-header-left">
-              <span class="accordion-icon">⚔️</span>
-              <span class="accordion-title">攻略情報</span>
-            </div>
-            <span class="accordion-chevron">▼</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-content">
-              <div class="walkthrough-content">
-                <h3>おすすめ装備（4章・狩人向け）</h3>
-                <ul>
-                  <li><strong>武器（弓）</strong>: 「コニファーの弓」が現時点のおすすめ。いっぱしランクアップ時や王都横のデカモロコシからドロップ</li>
-                  <li><strong>次の目標武器</strong>: 5章到達後に「シュガーの弓」（トロピアン諸島・ヨホホイ洞窟のボスドロップ）</li>
-                  <li><strong>防具</strong>: 現時点は店売り最強を装備。5章到達後に「伝統舞踊装備」+「ナツココブーツ」をピッカソンリゾートで購入</li>
-                  <li><strong>アクセサリー</strong>: 経験値アップ・移動速度アップ系を優先</li>
-                  <li><strong>武器の追加効果</strong>: 「属性ダメージアップ」「チャージ技ダメージアップ」が狩人と相性◎</li>
-                  <li><strong>チャージ短縮</strong>: 状態異常付与の効率が上がるので最優先で厳選</li>
-                </ul>
-
-                <h3>生産系ライフのレベル上げのコツ</h3>
-                <ul>
-                  <li><strong>経験値アップスキル</strong>: スキルボードで「経験値アップ」を最優先で取る（リセット可能なので気にせずOK）</li>
-                  <li><strong>経験値アップメガネ</strong>: パーティ4人全員分を揃えると効率大幅UP</li>
-                  <li><strong>素材の一括購入</strong>: 拠点ランクを上げてマールショップで素材をまとめ買い</li>
-                  <li><strong>錬金術師は「スーパーエイド」制作</strong>: 1本で約3万EXP、破格の効率</li>
-                  <li><strong>金策</strong>: 大穴三層の金冠8連周回で資金を確保</li>
-                </ul>
-
-                <h3>SP回復方法（薬以外）</h3>
-                <ul>
-                  <li><strong>焚き火で休む</strong>: 各地にある焚き火で寝るとSP回復できる</li>
-                  <li><strong>宿屋で休む</strong>: 10リッチで体力・SP回復</li>
-                  <li><strong>レベルアップ</strong>: レベルが上がるとHP・SP全回復</li>
-                  <li><strong>魔法使いのR1</strong>: 魔法使いはR1長押しでSPが徐々に回復</li>
-                  <li><strong>生産職の仲間</strong>: パーティに生産職がいるとHP・SPを継続回復してくれる</li>
-                </ul>
-
-                <h3>スキルボードの経験値増加について</h3>
-                <ul>
-                  <li><strong>ライフごとに独立</strong>: 経験値増加スキルはそのライフでのみ有効</li>
-                  <li><strong>他ライフには影響しない</strong>: 木こりで取った「経験値UP」は木こり中だけ</li>
-                  <li><strong>スキルポイントも独立</strong>: 各ライフで稼いだSPは他ライフでは使えない</li>
-                  <li><strong>間接的な活用</strong>: 経験値UP装備をパーティ全員に付けると効率UP</li>
-                </ul>
-
-                <h3>第4章 攻略ポイント（ネタバレ控えめ）</h3>
-                <ul>
-                  <li>精霊の歌に関するクエストを中心に進行</li>
-                  <li>農場・料理系ライフが活躍する場面あり</li>
-                  <li>ボス戦に備えてレベル上げと装備強化を推奨</li>
-                  <li>戦闘ライフのランクを「熟練」以上に上げておく</li>
-                  <li>回復アイテムを多めに用意</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /.accordion -->
+      <!-- 将来のゲーム追加はここに .game-card を追加 -->
     </div>
   </div>
 </div>
 
+<!-- ===== Screen: FL Detail ===== -->
+<div class="screen" id="screenDetail-fl">
+  <div class="container">
+    <button class="back-btn" id="backBtn-fl" aria-label="ゲーム一覧に戻る">
+      <span class="back-btn-icon">←</span>
+      <span>ゲーム一覧に戻る</span>
+    </button>
+
+    <div class="detail-game-header">
+      <span class="detail-game-title">ファンタジーライフi</span>
+      <span class="detail-game-genre">アクションRPG</span>
+    </div>
+
+    <div class="accordion">
+
+      <!-- セクション: 攻略ページ -->
+      <div class="accordion-section open" data-section="fl-guide-pages">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">📖</span>
+            <span class="accordion-title">攻略ページ</span>
+            <span class="accordion-count">3件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="guide-links">
+              <a href="pages/fl/index.html" class="guide-link guide-link--top">
+                <div class="guide-link-icon">📖</div>
+                <div class="guide-link-text">
+                  <div class="guide-link-title">FL攻略TOP</div>
+                  <div class="guide-link-desc">攻略ページの一覧・目次</div>
+                </div>
+                <div class="guide-link-arrow">›</div>
+              </a>
+              <a href="pages/fl/rank5-boss.html" class="guide-link guide-link--boss">
+                <div class="guide-link-icon">⚔️</div>
+                <div class="guide-link-text">
+                  <div class="guide-link-title">ボス一覧</div>
+                  <div class="guide-link-desc">エリアランク5以上のボス・ドロップ素材まとめ</div>
+                </div>
+                <div class="guide-link-arrow">›</div>
+              </a>
+              <a href="pages/fl/level-up.html" class="guide-link guide-link--level">
+                <div class="guide-link-icon">📈</div>
+                <div class="guide-link-text">
+                  <div class="guide-link-title">レベル上げ効率ガイド</div>
+                  <div class="guide-link-desc">レベル帯別おすすめスポット・経験値効率</div>
+                </div>
+                <div class="guide-link-arrow">›</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: メモ -->
+      <div class="accordion-section open" data-section="fl-memo">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">📝</span>
+            <span class="accordion-title">メモ</span>
+            <span class="accordion-count">4件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <ul class="memo-list">
+              <li>ライフレベルを上げたい</li>
+              <li>SPの回復方法について知りたい（薬を使う以外の方法）</li>
+              <li>スキルボードの経験値増加などは他のライフにも影響するか</li>
+              <li>使用中のライフ: 戦闘ライフは狩人、生産・野菜種ライフは全般使用中</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: リンク集 -->
+      <div class="accordion-section open" data-section="fl-links">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">🔗</span>
+            <span class="accordion-title">リンク集</span>
+            <span class="accordion-count">13件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="ext-links">
+              <a href="https://game8.jp/fantasylife-i" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>攻略Wiki（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://altema.jp/fantasylifei/story" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>ストーリー攻略チャート（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://gamewith.jp/fantasylife-i/" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>攻略まとめ（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+              </a>
+              <a href="https://gamecap.jp/fantasylife_i/chart.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>攻略チャート（gamecap）<span class="ext-link-domain">gamecap.jp</span>
+              </a>
+              <a href="https://game8.jp/fantasylife-i/688666" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>回復のやり方（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://gamewith.jp/fantasylife-i/499183" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>回復のやり方（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+              </a>
+              <a href="https://game8.jp/fantasylife-i/691390" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>スキルボードおすすめ（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://altema.jp/fantasylifei/skillpoint" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>スキルポイント稼ぎ（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://gamewith.jp/fantasylife-i/497350" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>狩人のスキル振り・装備（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+              </a>
+              <a href="https://game8.jp/fantasylife-i/688510" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>狩人の装備・立ち回り（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://altema.jp/fantasylifei/saikyosoubi" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>最強装備まとめ（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://chi-tara.com/fli_bakusoku/" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>制作ライフ爆速レベル上げ<span class="ext-link-domain">chi-tara.com</span>
+              </a>
+              <a href="https://gamewith.jp/fantasylife-i/497657" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>レベル上げ効率（GameWith）<span class="ext-link-domain">gamewith.jp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: 進捗チェックリスト -->
+      <div class="accordion-section open" data-section="fl-progress">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">✅</span>
+            <span class="accordion-title">進捗チェックリスト</span>
+            <span class="accordion-count" id="progressCount">3/7</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <ul class="checklist" id="progressChecklist">
+              <li class="done" data-index="0">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第1章</span>上陸！謎めく島ライフ</span>
+              </li>
+              <li class="done" data-index="1">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第2章</span>千年の時を超えて</span>
+              </li>
+              <li class="done" data-index="2">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第3章</span>ヒミツの時の採掘</span>
+              </li>
+              <li data-index="3">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第4章</span>オバケ野菜と精霊の歌</span>
+              </li>
+              <li data-index="4">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第5章</span>アートでヒートなお宝探し</span>
+              </li>
+              <li data-index="5">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第6章</span>試練の島に挑む者</span>
+              </li>
+              <li data-index="6">
+                <span class="checklist-check">✓</span>
+                <span class="checklist-text"><span class="checklist-chapter">第7章</span>未来をかけた歯車決戦</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: 攻略情報 -->
+      <div class="accordion-section open" data-section="fl-walkthrough">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">⚔️</span>
+            <span class="accordion-title">攻略情報</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="walkthrough-content">
+              <h3>おすすめ装備（4章・狩人向け）</h3>
+              <ul>
+                <li><strong>武器（弓）</strong>: 「コニファーの弓」が現時点のおすすめ。いっぱしランクアップ時や王都横のデカモロコシからドロップ</li>
+                <li><strong>次の目標武器</strong>: 5章到達後に「シュガーの弓」（トロピアン諸島・ヨホホイ洞窟のボスドロップ）</li>
+                <li><strong>防具</strong>: 現時点は店売り最強を装備。5章到達後に「伝統舞踊装備」+「ナツココブーツ」をピッカソンリゾートで購入</li>
+                <li><strong>アクセサリー</strong>: 経験値アップ・移動速度アップ系を優先</li>
+                <li><strong>武器の追加効果</strong>: 「属性ダメージアップ」「チャージ技ダメージアップ」が狩人と相性◎</li>
+                <li><strong>チャージ短縮</strong>: 状態異常付与の効率が上がるので最優先で厳選</li>
+              </ul>
+
+              <h3>生産系ライフのレベル上げのコツ</h3>
+              <ul>
+                <li><strong>経験値アップスキル</strong>: スキルボードで「経験値アップ」を最優先で取る（リセット可能なので気にせずOK）</li>
+                <li><strong>経験値アップメガネ</strong>: パーティ4人全員分を揃えると効率大幅UP</li>
+                <li><strong>素材の一括購入</strong>: 拠点ランクを上げてマールショップで素材をまとめ買い</li>
+                <li><strong>錬金術師は「スーパーエイド」制作</strong>: 1本で約3万EXP、破格の効率</li>
+                <li><strong>金策</strong>: 大穴三層の金冠8連周回で資金を確保</li>
+              </ul>
+
+              <h3>SP回復方法（薬以外）</h3>
+              <ul>
+                <li><strong>焚き火で休む</strong>: 各地にある焚き火で寝るとSP回復できる</li>
+                <li><strong>宿屋で休む</strong>: 10リッチで体力・SP回復</li>
+                <li><strong>レベルアップ</strong>: レベルが上がるとHP・SP全回復</li>
+                <li><strong>魔法使いのR1</strong>: 魔法使いはR1長押しでSPが徐々に回復</li>
+                <li><strong>生産職の仲間</strong>: パーティに生産職がいるとHP・SPを継続回復してくれる</li>
+              </ul>
+
+              <h3>スキルボードの経験値増加について</h3>
+              <ul>
+                <li><strong>ライフごとに独立</strong>: 経験値増加スキルはそのライフでのみ有効</li>
+                <li><strong>他ライフには影響しない</strong>: 木こりで取った「経験値UP」は木こり中だけ</li>
+                <li><strong>スキルポイントも独立</strong>: 各ライフで稼いだSPは他ライフでは使えない</li>
+                <li><strong>間接的な活用</strong>: 経験値UP装備をパーティ全員に付けると効率UP</li>
+              </ul>
+
+              <h3>第4章 攻略ポイント（ネタバレ控えめ）</h3>
+              <ul>
+                <li>精霊の歌に関するクエストを中心に進行</li>
+                <li>農場・料理系ライフが活躍する場面あり</li>
+                <li>ボス戦に備えてレベル上げと装備強化を推奨</li>
+                <li>戦闘ライフのランクを「熟練」以上に上げておく</li>
+                <li>回復アイテムを多めに用意</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.accordion -->
+  </div>
+</div>
+
 <script>
+// ===== Screen Navigation =====
+const SCREEN_STORAGE_KEY = 'gamelog-current-screen';
+
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(screenId);
+  if (target) {
+    target.classList.add('active');
+    localStorage.setItem(SCREEN_STORAGE_KEY, screenId);
+    window.scrollTo(0, 0);
+  }
+  // Update nav current indicator
+  document.querySelectorAll('.nav-link[data-nav]').forEach(link => {
+    link.classList.toggle('current', screenId === 'screenList');
+  });
+}
+
+// Game card click → detail screen
+document.querySelectorAll('.game-card[data-game]').forEach(card => {
+  function openDetail() {
+    const gameId = card.dataset.game;
+    showScreen('screenDetail-' + gameId);
+  }
+  card.addEventListener('click', openDetail);
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(); }
+  });
+});
+
+// Back buttons → list screen
+document.querySelectorAll('[id^="backBtn-"]').forEach(btn => {
+  btn.addEventListener('click', () => showScreen('screenList'));
+});
+
+// Nav home link → list screen (prevent default navigation)
+document.querySelectorAll('.nav-link[data-nav="home"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    showScreen('screenList');
+    // Close menu if open
+    if (navPanel.classList.contains('active')) toggleMenu();
+  });
+});
+
+// Restore last screen on load
+(function restoreScreen() {
+  const saved = localStorage.getItem(SCREEN_STORAGE_KEY);
+  if (saved && document.getElementById(saved)) {
+    showScreen(saved);
+  }
+})();
+
 // ===== Hamburger Menu =====
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const navOverlay = document.getElementById('navOverlay');

@@ -632,6 +632,17 @@ initChecklist();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
+  // リロード後にフラグをクリア（次回のSW更新に備える）
+  if (sessionStorage.getItem('sw-reloaded')) {
+    sessionStorage.removeItem('sw-reloaded');
+  }
+  // 新SWがコントロールを取得したら1回だけリロード（無限ループ防止）
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (sessionStorage.getItem('sw-reloaded')) return;
+    sessionStorage.setItem('sw-reloaded', '1');
+    window.location.reload();
+  });
+
   navigator.serviceWorker.register('/sw.js').then(function(reg) {
     // 新しいSWが見つかったらページをリロードして反映
     reg.addEventListener('updatefound', function() {
@@ -640,7 +651,7 @@ if ('serviceWorker' in navigator) {
         if (newWorker.state === 'activated') {
           // 初回インストール時はリロード不要
           if (!navigator.serviceWorker.controller) return;
-          window.location.reload();
+          // controllerchangeイベントでリロードされるのでここでは不要
         }
       });
     });

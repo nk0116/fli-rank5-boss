@@ -62,6 +62,15 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
+  /* Sub Tab Navigation */
+  .sub-tab-nav { max-width: 800px; margin: 0 auto 16px; display: flex; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid #1e2a4a; }
+  .sub-tab-btn { flex: 1; padding: 8px 12px; border: none; background: #16213e; color: #888; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; text-align: center; border-right: 1px solid #1e2a4a; }
+  .sub-tab-btn:last-child { border-right: none; }
+  .sub-tab-btn:hover { color: #ccc; background: #1e2a4a; }
+  .sub-tab-btn.active { background: #ffd70020; color: #ffd700; font-weight: bold; }
+  .sub-tab-content { display: none; }
+  .sub-tab-content.active { display: block; }
+
   /* Source */
   .source { max-width: 800px; margin: 20px auto 0; text-align: right; font-size: 0.75rem; color: #555; }
   .source a { color: #555; text-decoration: underline; }
@@ -145,95 +154,110 @@
   <div class="section">
     <h2 class="section-title">戦闘職のレベル上げ場所</h2>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-early">序盤</span>
-        <span class="level-range">Lv1 ~ 25</span>
-      </div>
-      <div class="level-location">バカデッカーナ大陸 各エリア</div>
-      <div class="level-desc">
-        塔を見つけてマップを開放しながら、倒せる敵を倒して経験値を稼ぐ。探索と並行してレベルを上げられるため効率的。<strong>自分より10~20レベル高い敵</strong>を狙うと経験値が多い。
-      </div>
-      <ul class="level-tips">
-        <li>ボスは高確率で宝箱を落とすので装備集め・金策も同時にできる</li>
-        <li>倒せるボスを見つけたら繰り返し周回する</li>
-      </ul>
+    <div class="sub-tab-nav" data-sub-group="combat">
+      <button class="sub-tab-btn active" data-sub-tab="combat-early">序盤</button>
+      <button class="sub-tab-btn" data-sub-tab="combat-mid">中盤</button>
+      <button class="sub-tab-btn" data-sub-tab="combat-late">終盤</button>
     </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-mid">中盤</span>
-        <span class="level-range">Lv25 ~ 40</span>
+    <!-- 序盤: Lv1-25 -->
+    <div class="sub-tab-content active" id="sub-combat-early">
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-early">序盤</span>
+          <span class="level-range">Lv1 ~ 25</span>
+        </div>
+        <div class="level-location">バカデッカーナ大陸 各エリア</div>
+        <div class="level-desc">
+          塔を見つけてマップを開放しながら、倒せる敵を倒して経験値を稼ぐ。探索と並行してレベルを上げられるため効率的。<strong>自分より10~20レベル高い敵</strong>を狙うと経験値が多い。
+        </div>
+        <ul class="level-tips">
+          <li>ボスは高確率で宝箱を落とすので装備集め・金策も同時にできる</li>
+          <li>倒せるボスを見つけたら繰り返し周回する</li>
+        </ul>
       </div>
-      <div class="level-location">トロピアン諸島 / ヨホホイ洞窟</div>
-      <div class="level-desc">
-        ボスの近くにファストトラベルできるため周回効率が高い。南西の<strong>ヨホホイ洞窟</strong>内も合わせて多くのボスが出現するため、連続して経験値を稼げる。
-      </div>
-      <ul class="level-tips">
-        <li>ファストトラベルポイントからボスまでの距離が近い</li>
-        <li>複数のボスを1ルートで回れる</li>
-      </ul>
     </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-late">中盤~終盤</span>
-        <span class="level-range">Lv40 ~ 50</span>
+    <!-- 中盤: Lv25-50 -->
+    <div class="sub-tab-content" id="sub-combat-mid">
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-mid">中盤</span>
+          <span class="level-range">Lv25 ~ 40</span>
+        </div>
+        <div class="level-location">トロピアン諸島 / ヨホホイ洞窟</div>
+        <div class="level-desc">
+          ボスの近くにファストトラベルできるため周回効率が高い。南西の<strong>ヨホホイ洞窟</strong>内も合わせて多くのボスが出現するため、連続して経験値を稼げる。
+        </div>
+        <ul class="level-tips">
+          <li>ファストトラベルポイントからボスまでの距離が近い</li>
+          <li>複数のボスを1ルートで回れる</li>
+        </ul>
       </div>
-      <div class="level-location">試練の洞窟 B4</div>
-      <div class="level-desc">
-        非常に多くの<strong>銀冠ボス</strong>が出現し、中央には金冠ボス<strong>「いねむりドラゴン」</strong>もいる。構造的に周回しやすく、効率よくレベルを上げられる。ストーリー6章で解放。
+
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-late">中盤~終盤</span>
+          <span class="level-range">Lv40 ~ 50</span>
+        </div>
+        <div class="level-location">試練の洞窟 B4</div>
+        <div class="level-desc">
+          非常に多くの<strong>銀冠ボス</strong>が出現し、中央には金冠ボス<strong>「いねむりドラゴン」</strong>もいる。構造的に周回しやすく、効率よくレベルを上げられる。ストーリー6章で解放。
+        </div>
+        <ul class="level-tips">
+          <li>銀冠ボスが密集しているため1周あたりの経験値が多い</li>
+          <li>金冠ボスも狙えるので高経験値を得やすい</li>
+        </ul>
       </div>
-      <ul class="level-tips">
-        <li>銀冠ボスが密集しているため1周あたりの経験値が多い</li>
-        <li>金冠ボスも狙えるので高経験値を得やすい</li>
-      </ul>
     </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
-        <span class="level-range">Lv50 ~ 60</span>
+    <!-- 終盤: Lv50-100 -->
+    <div class="sub-tab-content" id="sub-combat-late">
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+          <span class="level-range">Lv50 ~ 60</span>
+        </div>
+        <div class="level-location">ツバサキ谷（バカデッカーナ北東）</div>
+        <div class="level-desc">
+          出現するボスの数が多い。<strong>エリアランクを上げる</strong>ことで出現する敵のレベルも上がるため、最終的に非常に効率が良くなる。
+        </div>
+        <ul class="level-tips">
+          <li>エリアランク上昇で敵レベルも上昇する仕組みを活用</li>
+          <li>ボス数が多いため周回ルートを組みやすい</li>
+        </ul>
       </div>
-      <div class="level-location">ツバサキ谷（バカデッカーナ北東）</div>
-      <div class="level-desc">
-        出現するボスの数が多い。<strong>エリアランクを上げる</strong>ことで出現する敵のレベルも上がるため、最終的に非常に効率が良くなる。
-      </div>
-      <ul class="level-tips">
-        <li>エリアランク上昇で敵レベルも上昇する仕組みを活用</li>
-        <li>ボス数が多いため周回ルートを組みやすい</li>
-      </ul>
-    </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
-        <span class="level-range">Lv60 ~ 80</span>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+          <span class="level-range">Lv60 ~ 80</span>
+        </div>
+        <div class="level-location">ガチャダンツリー 800年前以上</div>
+        <div class="level-desc">
+          ストーリー4章で解放。ステージクリアで10年ずつ下の階層に進む。800年前以上の階層では<strong>Lv90超えの敵</strong>が出現し、非常に多くの経験値を得られる。
+        </div>
+        <ul class="level-tips">
+          <li>4章クリア後にアクセス可能</li>
+          <li>階層が深いほど敵レベルが高く、経験値も増加</li>
+        </ul>
       </div>
-      <div class="level-location">ガチャダンツリー 800年前以上</div>
-      <div class="level-desc">
-        ストーリー4章で解放。ステージクリアで10年ずつ下の階層に進む。800年前以上の階層では<strong>Lv90超えの敵</strong>が出現し、非常に多くの経験値を得られる。
-      </div>
-      <ul class="level-tips">
-        <li>4章クリア後にアクセス可能</li>
-        <li>階層が深いほど敵レベルが高く、経験値も増加</li>
-      </ul>
-    </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-final">最終</span>
-        <span class="level-range">Lv80 ~ 100</span>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-final">最終</span>
+          <span class="level-range">Lv80 ~ 100</span>
+        </div>
+        <div class="level-location">ガチャダンツリー 900年台 モンスターハウス</div>
+        <div class="level-desc">
+          狭い部屋だけで<strong>経験値100万以上</strong>をすぐに稼げる最高効率スポット。謎の石板も大量に集められる。
+        </div>
+        <ul class="level-tips">
+          <li>モンスターハウスの敵を<strong>1~2匹残して</strong>わざと戦闘不能になり「あきらめる」でリタイアすると何度でも再挑戦可能</li>
+          <li>全て倒すとクリア判定になり再戦不可になるので注意</li>
+          <li>謎の石板も同時に集められる</li>
+        </ul>
       </div>
-      <div class="level-location">ガチャダンツリー 900年台 モンスターハウス</div>
-      <div class="level-desc">
-        狭い部屋だけで<strong>経験値100万以上</strong>をすぐに稼げる最高効率スポット。謎の石板も大量に集められる。
-      </div>
-      <ul class="level-tips">
-        <li>モンスターハウスの敵を<strong>1~2匹残して</strong>わざと戦闘不能になり「あきらめる」でリタイアすると何度でも再挑戦可能</li>
-        <li>全て倒すとクリア判定になり再戦不可になるので注意</li>
-        <li>謎の石板も同時に集められる</li>
-      </ul>
     </div>
   </div>
 </div>
@@ -243,106 +267,121 @@
   <div class="section">
     <h2 class="section-title">採取職のレベル上げ方法</h2>
 
-    <div class="tip-card">
-      <div class="tip-card-title">基本方針</div>
-      <div class="tip-card-body">
-        <ul>
-          <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
-          <li>強いライフ道具を装備してレベル差を埋める</li>
-          <li>採掘師の仲間を2人以上連れて自動で採掘させると効率UP</li>
+    <div class="sub-tab-nav" data-sub-group="gather">
+      <button class="sub-tab-btn active" data-sub-tab="gather-early">序盤</button>
+      <button class="sub-tab-btn" data-sub-tab="gather-mid">中盤</button>
+      <button class="sub-tab-btn" data-sub-tab="gather-late">終盤</button>
+    </div>
+
+    <!-- 序盤 -->
+    <div class="sub-tab-content active" id="sub-gather-early">
+      <div class="tip-card">
+        <div class="tip-card-title">基本方針</div>
+        <div class="tip-card-body">
+          <ul>
+            <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
+            <li>強いライフ道具を装備してレベル差を埋める</li>
+            <li>採掘師の仲間を2人以上連れて自動で採掘させると効率UP</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-early">序盤~中盤</span>
+        </div>
+        <div class="level-location">各エリアの採取ポイント</div>
+        <div class="level-desc">
+          ストーリー進行に合わせて新エリアの採取ポイントを回る。仲間に採取系ライフを持たせておくと自動で手伝ってくれる。
+        </div>
+      </div>
+    </div>
+
+    <!-- 中盤 -->
+    <div class="sub-tab-content" id="sub-gather-mid">
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-late">中盤~終盤</span>
+        </div>
+        <div class="level-location">ワコイの祠 周回</div>
+        <div class="level-desc">
+          仲間に採取させながら効率よくレベルを上げられるスポット。
+        </div>
+      </div>
+    </div>
+
+    <!-- 終盤 -->
+    <div class="sub-tab-content" id="sub-gather-late">
+      <div class="tip-card" style="margin-bottom:16px;">
+        <div class="tip-card-title">終盤の採取職レベル上げ 共通ポイント</div>
+        <div class="tip-card-body">
+          <ul>
+            <li><strong>バカデッカーナ大陸のエリアランク5以上</strong>で金冠の採取ポイントが出現し、経験値が大幅に増加する</li>
+            <li>自分よりレベルが高い対象を狙うほど経験値が多い</li>
+            <li>同じライフの仲間をパーティに編成すると自動で手伝ってくれて効率UP</li>
+            <li>スキルボードの<strong>「経験値アップ」</strong>を忘れずに取得する</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+        </div>
+        <div class="level-location">木こり: バカデッカーナ大陸 ランク5エリア</div>
+        <div class="level-desc">
+          エリアランク5以上のエリアでは<strong>金冠の木</strong>が出現し、1回の伐採で大量の経験値を得られる。パーティに木こりの仲間を入れて一緒に伐採するとさらに効率が上がる。
+        </div>
+        <ul class="level-tips">
+          <li>エリアランクが高いほど高レベルの木が出現する</li>
+          <li>最強装備は「真・時のオノ」+「採取王シリーズ」</li>
+          <li>スキル振りをこまめに行い、伐採できる木の範囲を広げる</li>
         </ul>
       </div>
-    </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-early">序盤~中盤</span>
-      </div>
-      <div class="level-location">各エリアの採取ポイント</div>
-      <div class="level-desc">
-        ストーリー進行に合わせて新エリアの採取ポイントを回る。仲間に採取系ライフを持たせておくと自動で手伝ってくれる。
-      </div>
-    </div>
-
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-late">中盤~終盤</span>
-      </div>
-      <div class="level-location">ワコイの祠 周回</div>
-      <div class="level-desc">
-        仲間に採取させながら効率よくレベルを上げられるスポット。
-      </div>
-    </div>
-
-    <div class="tip-card" style="margin-bottom:16px;">
-      <div class="tip-card-title">終盤の採取職レベル上げ 共通ポイント</div>
-      <div class="tip-card-body">
-        <ul>
-          <li><strong>バカデッカーナ大陸のエリアランク5以上</strong>で金冠の採取ポイントが出現し、経験値が大幅に増加する</li>
-          <li>自分よりレベルが高い対象を狙うほど経験値が多い</li>
-          <li>同じライフの仲間をパーティに編成すると自動で手伝ってくれて効率UP</li>
-          <li>スキルボードの<strong>「経験値アップ」</strong>を忘れずに取得する</li>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+        </div>
+        <div class="level-location">採掘師: ドラドロ溶岩地帯（バカデッカーナ大陸）</div>
+        <div class="level-desc">
+          <strong>鉱床が密集</strong>しているため採掘師のレベル上げに最適。エリアランクに応じて鉱床レベルが変動し、ランク5以上で金冠鉱床も出現する。
+        </div>
+        <ul class="level-tips">
+          <li>王冠付き鉱床は5分のクールタイムがあるので、待機中は木や魚影で他の採取職も並行して上げる</li>
+          <li>パーティに採掘師の仲間を2人以上入れて自動採掘させると効率UP</li>
+          <li>大穴3層目の王冠鉱床もLv60付近まで有効</li>
         </ul>
       </div>
-    </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+        </div>
+        <div class="level-location">釣り人: バカデッカーナ大陸 ランク5エリア</div>
+        <div class="level-desc">
+          エリアランク5以上で<strong>金冠の魚影</strong>が出現し、高経験値を得られる。中盤ではヨホホイ洞窟の金冠「レイトウマグロ」も効率が良い。
+        </div>
+        <ul class="level-tips">
+          <li>パーティに釣り人の仲間を入れると高レベルの魚を釣りやすくなる</li>
+          <li>試練クエストを並行して進めると、ランクアップと経験値の両方を稼げる</li>
+          <li>レベル差がある魚ほど経験値が多いので、できるだけ高レベルの魚を狙う</li>
+        </ul>
       </div>
-      <div class="level-location">木こり: バカデッカーナ大陸 ランク5エリア</div>
-      <div class="level-desc">
-        エリアランク5以上のエリアでは<strong>金冠の木</strong>が出現し、1回の伐採で大量の経験値を得られる。パーティに木こりの仲間を入れて一緒に伐採するとさらに効率が上がる。
-      </div>
-      <ul class="level-tips">
-        <li>エリアランクが高いほど高レベルの木が出現する</li>
-        <li>最強装備は「真・時のオノ」+「採取王シリーズ」</li>
-        <li>スキル振りをこまめに行い、伐採できる木の範囲を広げる</li>
-      </ul>
-    </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+        </div>
+        <div class="level-location">農家: ミドリーナ台地（バカデッカーナ大陸）</div>
+        <div class="level-desc">
+          農家のレベル上げに最高効率のエリア。仲間を農家のみで編成し、台地の農作物を採取する。<strong>どこでもゲートを2回使い</strong>マップ移動を挟むと移動の手間を省ける。
+        </div>
+        <ul class="level-tips">
+          <li>エリアランク上昇で農作物のレベルも上がる</li>
+          <li>仲間は農家のみで編成すると自動採取で効率UP</li>
+        </ul>
       </div>
-      <div class="level-location">採掘師: ドラドロ溶岩地帯（バカデッカーナ大陸）</div>
-      <div class="level-desc">
-        <strong>鉱床が密集</strong>しているため採掘師のレベル上げに最適。エリアランクに応じて鉱床レベルが変動し、ランク5以上で金冠鉱床も出現する。
-      </div>
-      <ul class="level-tips">
-        <li>王冠付き鉱床は5分のクールタイムがあるので、待機中は木や魚影で他の採取職も並行して上げる</li>
-        <li>パーティに採掘師の仲間を2人以上入れて自動採掘させると効率UP</li>
-        <li>大穴3層目の王冠鉱床もLv60付近まで有効</li>
-      </ul>
-    </div>
-
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
-      </div>
-      <div class="level-location">釣り人: バカデッカーナ大陸 ランク5エリア</div>
-      <div class="level-desc">
-        エリアランク5以上で<strong>金冠の魚影</strong>が出現し、高経験値を得られる。中盤ではヨホホイ洞窟の金冠「レイトウマグロ」も効率が良い。
-      </div>
-      <ul class="level-tips">
-        <li>パーティに釣り人の仲間を入れると高レベルの魚を釣りやすくなる</li>
-        <li>試練クエストを並行して進めると、ランクアップと経験値の両方を稼げる</li>
-        <li>レベル差がある魚ほど経験値が多いので、できるだけ高レベルの魚を狙う</li>
-      </ul>
-    </div>
-
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
-      </div>
-      <div class="level-location">農家: ミドリーナ台地（バカデッカーナ大陸）</div>
-      <div class="level-desc">
-        農家のレベル上げに最高効率のエリア。仲間を農家のみで編成し、台地の農作物を採取する。<strong>どこでもゲートを2回使い</strong>マップ移動を挟むと移動の手間を省ける。
-      </div>
-      <ul class="level-tips">
-        <li>エリアランク上昇で農作物のレベルも上がる</li>
-        <li>仲間は農家のみで編成すると自動採取で効率UP</li>
-      </ul>
     </div>
   </div>
 </div>
@@ -352,34 +391,45 @@
   <div class="section">
     <h2 class="section-title">制作職のレベル上げ方法</h2>
 
-    <div class="tip-card">
-      <div class="tip-card-title">基本方針</div>
-      <div class="tip-card-body">
-        <ul>
-          <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
-          <li>制作できる最高レベルのアイテムを繰り返し作る</li>
-          <li>素材集めは仲間に任せて効率化</li>
-        </ul>
+    <div class="sub-tab-nav" data-sub-group="craft">
+      <button class="sub-tab-btn active" data-sub-tab="craft-early">序盤~中盤</button>
+      <button class="sub-tab-btn" data-sub-tab="craft-late">終盤</button>
+    </div>
+
+    <!-- 序盤~中盤 -->
+    <div class="sub-tab-content active" id="sub-craft-early">
+      <div class="tip-card">
+        <div class="tip-card-title">基本方針</div>
+        <div class="tip-card-body">
+          <ul>
+            <li>スキルボードの<strong>「経験値アップ」</strong>を最優先で習得する</li>
+            <li>制作できる最高レベルのアイテムを繰り返し作る</li>
+            <li>素材集めは仲間に任せて効率化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-early">序盤~中盤</span>
+        </div>
+        <div class="level-location">各街の制作台</div>
+        <div class="level-desc">
+          その時点で作れる最もレベルの高いアイテムを制作して経験値を稼ぐ。レシピのレベルが自分に近いほど経験値が多い。
+        </div>
       </div>
     </div>
 
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-early">序盤~中盤</span>
-      </div>
-      <div class="level-location">各街の制作台</div>
-      <div class="level-desc">
-        その時点で作れる最もレベルの高いアイテムを制作して経験値を稼ぐ。レシピのレベルが自分に近いほど経験値が多い。
-      </div>
-    </div>
-
-    <div class="level-card">
-      <div class="level-header">
-        <span class="level-badge badge-endgame">終盤</span>
-      </div>
-      <div class="level-location">伝説武器 / 星5装備の制作・打ち直し</div>
-      <div class="level-desc">
-        終盤は<strong>伝説武器や星5装備</strong>の制作・打ち直しが最も経験値効率が良い。素材確保が大変だが1回あたりの経験値が非常に高い。
+    <!-- 終盤 -->
+    <div class="sub-tab-content" id="sub-craft-late">
+      <div class="level-card">
+        <div class="level-header">
+          <span class="level-badge badge-endgame">終盤</span>
+        </div>
+        <div class="level-location">伝説武器 / 星5装備の制作・打ち直し</div>
+        <div class="level-desc">
+          終盤は<strong>伝説武器や星5装備</strong>の制作・打ち直しが最も経験値効率が良い。素材確保が大変だが1回あたりの経験値が非常に高い。
+        </div>
       </div>
     </div>
   </div>
@@ -459,6 +509,23 @@ tabBtns.forEach(btn => {
     tabContents.forEach(c => c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + target).classList.add('active');
+  });
+});
+
+// Sub Tab switching
+const subTabBtns = document.querySelectorAll('.sub-tab-btn');
+subTabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.subTab;
+    const group = btn.closest('.sub-tab-nav').dataset.subGroup;
+    // Deactivate siblings in same group
+    const nav = btn.closest('.sub-tab-nav');
+    nav.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Show/hide sub-tab contents within the same parent tab
+    const parentTab = btn.closest('.tab-content');
+    parentTab.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('sub-' + target).classList.add('active');
   });
 });
 

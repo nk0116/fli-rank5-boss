@@ -1,0 +1,17 @@
+{
+  "name": "GameLog - ゲーム攻略ポータル",
+  "short_name": "GameLog",
+  "description": "ゲーム攻略情報まとめ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a1a2e'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='%23ffd700' font-family='sans-serif' font-weight='bold'>GL</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

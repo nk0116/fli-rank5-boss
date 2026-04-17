@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="/manifest.json">
+<title>ファンタジーライフi - ランク5攻略サマリー</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 8px; font-size: 1.4rem; color: #ffd700; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+  .back-link { display: inline-block; margin-bottom: 16px; color: #74b9ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { color: #ffd700; }
+
+  /* Breadcrumb */
+  .breadcrumb { max-width: 900px; margin: 0 auto 16px; font-size: 0.8rem; }
+  .breadcrumb a { color: #74b9ff; text-decoration: none; }
+  .breadcrumb a:hover { color: #ffd700; }
+  .breadcrumb span { color: #555; margin: 0 6px; }
+
+  /* Main layout */
+  .main { max-width: 900px; margin: 0 auto; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 1.05rem; color: #ffd700; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e2a4a; }
+  .section-note { font-size: 0.8rem; color: #888; margin-bottom: 12px; padding: 8px 12px; background: #0f0f1a; border-radius: 6px; border-left: 3px solid #ffd70055; }
+
+  /* Highlight box */
+  .highlight-box { background: linear-gradient(135deg, #0f3460, #16213e); border: 1px solid #ffd70033; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+  .highlight-box-title { font-size: 0.9rem; font-weight: bold; color: #ffd700; margin-bottom: 10px; }
+  .highlight-box-body { font-size: 0.85rem; color: #ccc; line-height: 1.8; }
+  .highlight-box-body li { margin-left: 16px; margin-bottom: 4px; }
+  .highlight-box-body strong { color: #ffd700; }
+
+  /* Step list */
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item { display: flex; gap: 14px; align-items: flex-start; background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 14px 16px; }
+  .step-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: #ffd700; color: #1a1a2e; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+  .step-body { flex: 1; font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+  .step-body strong { color: #ffd700; }
+
+  /* Area grid */
+  .area-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .area-card { background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 14px 16px; }
+  .area-card:hover { border-color: #ffd70066; }
+  .area-card-name { font-size: 0.95rem; font-weight: bold; color: #fff; margin-bottom: 6px; }
+  .area-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+  .area-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; white-space: nowrap; }
+  .tag-monster { background: #e74c3c22; color: #ff6b6b; border: 1px solid #e74c3c44; }
+  .tag-mining { background: #f39c1222; color: #ffeaa7; border: 1px solid #f39c1244; }
+  .tag-fishing { background: #3498db22; color: #74b9ff; border: 1px solid #3498db44; }
+  .tag-wood { background: #27ae6022; color: #55efc4; border: 1px solid #27ae6044; }
+  .tag-legend { background: #9b59b622; color: #d6a3ff; border: 1px solid #9b59b644; }
+  .tag-special { background: #ffd70022; color: #ffd700; border: 1px solid #ffd70044; }
+  .area-card-note { font-size: 0.78rem; color: #666; }
+
+  /* Quick links */
+  .quick-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .quick-link { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; text-decoration: none; color: #e0e0e0; transition: all 0.2s; }
+  .quick-link:hover { border-color: #ffd700; background: #1e2a4a; }
+  .quick-link-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .quick-link-text { flex: 1; }
+  .quick-link-title { font-size: 0.9rem; font-weight: 600; color: #fff; }
+  .quick-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
+  .quick-link-arrow { color: #555; font-size: 0.85rem; }
+
+  /* Hamburger Menu */
+  .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
+  .hamburger-btn:hover { border-color: #ffd700; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: #ffd700; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .nav-overlay.active { opacity: 1; visibility: visible; }
+  .nav-panel { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel.active { right: 0; }
+  .nav-panel-title { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
+  .nav-section-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid #1e2a4a; }
+  .nav-link { display: block; padding: 10px 14px; margin-bottom: 2px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
+  .nav-link:hover { background: #1e2a4a; color: #ffd700; }
+  .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
+  .nav-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 8px; }
+    .area-grid { grid-template-columns: 1fr; }
+    .quick-links { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
+  <div class="nav-panel-title">GameLog</div>
+  <a href="../../index.html" class="nav-link">
+    ポータルTOP
+    <div class="nav-link-desc">ゲーム一覧・進捗管理</div>
+  </a>
+  <div class="nav-section-label">ファンタジーライフi</div>
+  <a href="index.html" class="nav-link">
+    FL攻略TOP
+    <div class="nav-link-desc">攻略ページ一覧</div>
+  </a>
+  <a href="rank5-overview.html" class="nav-link current">
+    ランク5攻略サマリー
+    <div class="nav-link-desc">周回テンプレ・必須素材・エリア一覧</div>
+  </a>
+  <a href="rank5-boss.html" class="nav-link">
+    ボス一覧
+    <div class="nav-link-desc">エリアランク5以上のボス・ドロップ素材</div>
+  </a>
+  <a href="level-up.html" class="nav-link">
+    レベル上げ
+    <div class="nav-link-desc">レベル帯別おすすめスポット</div>
+  </a>
+  <a href="items.html" class="nav-link">
+    装備・伝説素材
+    <div class="nav-link-desc">真・時装備/伝説素材/ドロップUP</div>
+  </a>
+  <a href="legendary-monsters.html" class="nav-link">
+    伝説ボス・フィールドボス
+    <div class="nav-link-desc">フィールドボス・伝説チャレンジ・討伐稼ぎ</div>
+  </a>
+  <a href="gathering.html" class="nav-link">
+    採集・採掘ガイド
+    <div class="nav-link-desc">採掘/釣り/木こり/採取スポット</div>
+  </a>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../../index.html">GameLog</a>
+  <span>></span>
+  <a href="index.html">ファンタジーライフi</a>
+  <span>></span>
+  ランク5攻略サマリー
+</div>
+
+<a href="index.html" class="back-link">← FL攻略TOPに戻る</a>
+<h1>ランク5攻略サマリー</h1>
+<p class="subtitle">周回テンプレ / 必須素材 / エリア一覧</p>
+
+<div class="main">
+
+  <!-- ランク5の特徴 -->
+  <div class="section">
+    <div class="section-title">ランク5帯の特徴</div>
+    <div class="highlight-box">
+      <div class="highlight-box-title">ER5から解禁されること</div>
+      <div class="highlight-box-body">
+        <ul>
+          <li>バカデッカーナ大陸全域で<strong>金冠採取ポイント</strong>が発生。1採取あたりの経験値・素材量が大幅UP。</li>
+          <li><strong>5分クールタイムの銀冠ボス</strong>がマップ各地に配置。</li>
+          <li>伝説チャレンジはER3+で発生するが、<strong>雑魚狩りポイントが大幅に伸びるのはER5から</strong>。</li>
+          <li>最終装備「<strong>真・時シリーズ</strong>」はストーリークリア後に解禁。ER5帯の伝説素材で仕上げる流れ。</li>
+          <li>セキネツ山地・ドロドロ溶岩地帯では<strong>伝説チャレンジが発生しない</strong>ため通常チャレで回す。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 周回テンプレ -->
+  <div class="section">
+    <div class="section-title">周回テンプレ（基本セットアップ）</div>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>アイテムドロップUP装備を全身装備（最大+110%）</strong>してから出発。マールショップ評判5でレシピ入手。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>マルチプレイ</strong>なら画面上ゲージをMAXにして伝説チャレンジを確定発生させる。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>ソロ</strong>なら塔でエリアランクを上げ下げして伝説チャレンジを再抽選（塔ランク切替裏技）。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">伝説チャレンジ発生中は<strong>即対象エリアへ移動</strong>。大陸移動するとチャレンジがリセットされるため、編成・装備変更は塔で済ませる。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">伝説チャレなし時は<strong>ノーズン山地のグラスファイト鉱床 ⇔ レイトウマグロ島</strong>を5分サイクルで交互周回。採掘＋釣りを同時レベリング。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 必須素材 -->
+  <div class="section">
+    <div class="section-title">真・時シリーズ 必須素材一覧</div>
+    <div class="section-note">伝説チャレンジで集める主要素材。ドロップUP装備着用必須。</div>
+    <div class="area-grid">
+      <div class="area-card">
+        <div class="area-card-name">伝説ドン・ホーン</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">クネック山岳 / ER3以上（ER5推奨）<br>伝説ドン・バハ・ハを討伐</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">伝説ギンギラダイヤ</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">カラット砂漠西 / ER3以上（ER5推奨）<br>伝説ギンギラスタルを採掘</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">伝説の神原木</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">ハネビラの森 / ER3以上<br>伝説ゴッドツリーを伐採</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">古代のオーブ</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-mining">採掘</span>
+        </div>
+        <div class="area-card-note">ノーズン山地（大穴3層目） / ER5<br>グラスファイト鉱床で採掘</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">溶岩の竜王石</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-mining">採掘</span>
+        </div>
+        <div class="area-card-note">ドロドロ溶岩地帯 / ER5推奨<br>通常チャレ＋採掘で入手</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">まじゅうクリスタル</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">リューノメ山地 / ノーズン山地 / ER3以上</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- エリア一覧 -->
+  <div class="section">
+    <div class="section-title">バカデッカーナ大陸 ER5エリア一覧</div>
+    <div class="area-grid">
+      <div class="area-card">
+        <div class="area-card-name">カラット砂漠西</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-fishing">釣り</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">伝説ギンギラスタル狙いの主戦場</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">カラット砂漠東</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">砂漠西とセットで周回</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">グランベリー大平原南</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">オムロイの祠周回が効率良</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">グランベリー大平原西</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">イネムリドラゴン・ランハートのとりで</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">ハネビラの森</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-fishing">釣り</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">伝説ゴッドツリー狙いの主戦場</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">キノコ秘境</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">伐採＋採取＋討伐の複合エリア</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">ツバサキ谷</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">採掘＋採取＋討伐の複合エリア</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">ドロドロ溶岩地帯</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+        </div>
+        <div class="area-card-note">伝説チャレなし。ガンモエパンサー周回が主力</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">セキネツ山地</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-wood">伐採</span>
+        </div>
+        <div class="area-card-note">伝説チャレなし。雑魚狩り＋採掘が主力</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">クネック山岳</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">伝説ドン・バハ・ハ狙いの主戦場</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">キーバ諸島</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-fishing">釣り</span>
+          <span class="area-tag tag-wood">伐採</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">伝説魚チャレンジあり</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">リューノメ山地</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+        </div>
+        <div class="area-card-note">まじゅうクリスタル狙い</div>
+      </div>
+      <div class="area-card">
+        <div class="area-card-name">ノーズン山地</div>
+        <div class="area-card-tags">
+          <span class="area-tag tag-monster">討伐</span>
+          <span class="area-tag tag-mining">採掘</span>
+          <span class="area-tag tag-fishing">釣り</span>
+          <span class="area-tag tag-legend">伝説チャレ</span>
+          <span class="area-tag tag-special">超効率</span>
+        </div>
+        <div class="area-card-note">グラスファイト鉱床＋レイトウマグロ島。最効率エリア</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 詳細ページへのリンク -->
+  <div class="section">
+    <div class="section-title">詳細攻略ページ</div>
+    <div class="quick-links">
+      <a href="rank5-boss.html" class="quick-link">
+        <span class="quick-link-icon">⚔️</span>
+        <div class="quick-link-text">
+          <div class="quick-link-title">ボス一覧</div>
+          <div class="quick-link-desc">全エリアのボス・ドロップ素材（検索・フィルター付き）</div>
+        </div>
+        <span class="quick-link-arrow">›</span>
+      </a>
+      <a href="items.html" class="quick-link">
+        <span class="quick-link-icon">🗡️</span>
+        <div class="quick-link-text">
+          <div class="quick-link-title">装備・伝説素材</div>
+          <div class="quick-link-desc">真・時装備 / 伝説素材 / ドロップUP装備</div>
+        </div>
+        <span class="quick-link-arrow">›</span>
+      </a>
+      <a href="legendary-monsters.html" class="quick-link">
+        <span class="quick-link-icon">👾</span>
+        <div class="quick-link-text">
+          <div class="quick-link-title">伝説ボス・フィールドボス</div>
+          <div class="quick-link-desc">フィールドボス / 伝説チャレンジ / 討伐稼ぎ</div>
+        </div>
+        <span class="quick-link-arrow">›</span>
+      </a>
+      <a href="gathering.html" class="quick-link">
+        <span class="quick-link-icon">⛏️</span>
+        <div class="quick-link-text">
+          <div class="quick-link-title">採集・採掘ガイド</div>
+          <div class="quick-link-desc">採掘 / 釣り / 木こり / 採取スポット</div>
+        </div>
+        <span class="quick-link-arrow">›</span>
+      </a>
+      <a href="level-up.html" class="quick-link">
+        <span class="quick-link-icon">📈</span>
+        <div class="quick-link-text">
+          <div class="quick-link-title">レベル上げ</div>
+          <div class="quick-link-desc">レベル帯別おすすめスポット</div>
+        </div>
+        <span class="quick-link-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== Hamburger Menu =====
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navOverlay = document.getElementById('navOverlay');
+const navPanel = document.getElementById('navPanel');
+function toggleMenu() {
+  const isOpen = navPanel.classList.contains('active');
+  hamburgerBtn.classList.toggle('active');
+  navOverlay.classList.toggle('active');
+  navPanel.classList.toggle('active');
+  hamburgerBtn.setAttribute('aria-expanded', !isOpen);
+  hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+hamburgerBtn.addEventListener('click', toggleMenu);
+navOverlay.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu(); });
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'activated') {
+          if (!navigator.serviceWorker.controller) return;
+          window.location.reload();
+        }
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

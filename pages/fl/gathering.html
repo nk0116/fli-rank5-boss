@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="/manifest.json">
+<title>ファンタジーライフi - 採集・採掘ガイド</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 8px; font-size: 1.4rem; color: #ffd700; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+  .back-link { display: inline-block; margin-bottom: 16px; color: #74b9ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { color: #ffd700; }
+
+  /* Breadcrumb */
+  .breadcrumb { max-width: 900px; margin: 0 auto 16px; font-size: 0.8rem; }
+  .breadcrumb a { color: #74b9ff; text-decoration: none; }
+  .breadcrumb a:hover { color: #ffd700; }
+  .breadcrumb span { color: #555; margin: 0 6px; }
+
+  /* Tab Navigation */
+  .tab-nav { max-width: 900px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .tab-btn { padding: 8px 18px; border: 1px solid #444; border-radius: 20px; background: #16213e; color: #ccc; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .tab-btn:hover { border-color: #ffd700; color: #ffd700; }
+  .tab-btn.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; font-weight: bold; }
+
+  /* Tab panels */
+  .tab-panel { display: none; max-width: 900px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  /* Search */
+  .controls { margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .search-box { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid #444; border-radius: 8px; background: #16213e; color: #e0e0e0; font-size: 1rem; outline: none; }
+  .search-box:focus { border-color: #ffd700; }
+  .search-box::placeholder { color: #666; }
+  .stats { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 1.05rem; color: #ffd700; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #1e2a4a; }
+  .section-note { font-size: 0.8rem; color: #888; margin-bottom: 12px; padding: 8px 12px; background: #0f0f1a; border-radius: 6px; border-left: 3px solid #ffd70055; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; background: #16213e; }
+  thead th { background: #0f3460; color: #ffd700; padding: 12px 10px; text-align: left; font-size: 0.85rem; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #1e2a4a; transition: background 0.15s; }
+  tbody tr:hover { background: #1e2a4a; }
+  tbody td { padding: 10px; font-size: 0.85rem; vertical-align: top; }
+  .no-results { text-align: center; padding: 40px; color: #666; }
+  mark { background: #ffd70055; color: #ffd700; border-radius: 2px; padding: 0 2px; }
+  .spot-name { color: #fff; font-weight: 600; }
+  .area-name { color: #74b9ff; font-size: 0.82rem; }
+  .er-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: bold; background: #27ae6033; color: #55efc4; border: 1px solid #27ae6055; white-space: nowrap; }
+  .drop-list { font-size: 0.8rem; color: #aaa; line-height: 1.6; }
+  .note-text { font-size: 0.78rem; color: #666; }
+
+  /* Route card */
+  .route-card { background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; }
+  .route-card:hover { border-color: #ffd70066; }
+  .route-card-step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 10px; }
+  .route-step-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: #ffd700; color: #1a1a2e; font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+  .route-step-body { flex: 1; font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+  .route-step-body strong { color: #ffd700; }
+
+  /* External links */
+  .ext-links { margin-top: 20px; }
+  .ext-links-title { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .ext-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: #74b9ff; font-size: 0.82rem; border-radius: 6px; transition: background 0.2s; }
+  .ext-link:hover { background: #1a1a2e; color: #a4d4ff; }
+  .ext-link-domain { font-size: 0.68rem; color: #555; margin-left: auto; }
+
+  /* Hamburger Menu */
+  .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
+  .hamburger-btn:hover { border-color: #ffd700; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: #ffd700; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .nav-overlay.active { opacity: 1; visibility: visible; }
+  .nav-panel { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel.active { right: 0; }
+  .nav-panel-title { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
+  .nav-section-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid #1e2a4a; }
+  .nav-link { display: block; padding: 10px 14px; margin-bottom: 2px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
+  .nav-link:hover { background: #1e2a4a; color: #ffd700; }
+  .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
+  .nav-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 8px; }
+    .controls { flex-direction: column; }
+    .table-wrap table, .table-wrap thead, .table-wrap tbody, .table-wrap th, .table-wrap td, .table-wrap tr { display: block; }
+    .table-wrap thead { display: none; }
+    .table-wrap tbody tr { margin-bottom: 12px; background: #16213e; border-radius: 8px; border: 1px solid #1e2a4a; padding: 12px; }
+    .table-wrap tbody td { padding: 4px 0; border: none; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
+  <div class="nav-panel-title">GameLog</div>
+  <a href="../../index.html" class="nav-link">
+    ポータルTOP
+    <div class="nav-link-desc">ゲーム一覧・進捗管理</div>
+  </a>
+  <div class="nav-section-label">ファンタジーライフi</div>
+  <a href="index.html" class="nav-link">
+    FL攻略TOP
+    <div class="nav-link-desc">攻略ページ一覧</div>
+  </a>
+  <a href="rank5-overview.html" class="nav-link">
+    ランク5攻略サマリー
+    <div class="nav-link-desc">周回テンプレ・必須素材・エリア一覧</div>
+  </a>
+  <a href="rank5-boss.html" class="nav-link">
+    ボス一覧
+    <div class="nav-link-desc">エリアランク5以上のボス・ドロップ素材</div>
+  </a>
+  <a href="level-up.html" class="nav-link">
+    レベル上げ
+    <div class="nav-link-desc">レベル帯別おすすめスポット</div>
+  </a>
+  <a href="items.html" class="nav-link">
+    装備・伝説素材
+    <div class="nav-link-desc">真・時装備/伝説素材/ドロップUP</div>
+  </a>
+  <a href="legendary-monsters.html" class="nav-link">
+    伝説ボス・フィールドボス
+    <div class="nav-link-desc">フィールドボス・伝説チャレンジ・討伐稼ぎ</div>
+  </a>
+  <a href="gathering.html" class="nav-link current">
+    採集・採掘ガイド
+    <div class="nav-link-desc">採掘/釣り/木こり/採取スポット</div>
+  </a>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../../index.html">GameLog</a>
+  <span>></span>
+  <a href="index.html">ファンタジーライフi</a>
+  <span>></span>
+  採集・採掘ガイド
+</div>
+
+<a href="index.html" class="back-link">← FL攻略TOPに戻る</a>
+<h1>採集・採掘ガイド</h1>
+<p class="subtitle">採掘 / 釣り / 木こり / 採取 — ランク5帯おすすめスポット</p>
+
+<!-- Tab Navigation -->
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="mining">採掘</button>
+  <button class="tab-btn" data-tab="fishing">釣り</button>
+  <button class="tab-btn" data-tab="woodcutting">木こり</button>
+  <button class="tab-btn" data-tab="foraging">採取</button>
+  <button class="tab-btn" data-tab="route">最効率ルート</button>
+</div>
+
+<!-- Tab: 採掘 -->
+<div class="tab-panel active" id="tab-mining">
+  <div class="section">
+    <div class="section-title">採掘（採掘師）— ランク5帯おすすめスポット</div>
+    <div class="section-note">ER5以上で金冠採取ポイントが解禁。採掘師マスター試練「闇の脈流を断て」はグラスファイト鉱床をEXCELLENTで2回採掘（報酬: スター×900）。</div>
+    <div class="controls">
+      <input type="text" class="search-box" id="mining-search" placeholder="スポット名・エリア・アイテムで検索...">
+    </div>
+    <div class="stats" id="mining-stats"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>スポット名</th>
+            <th>エリア</th>
+            <th>必要ER</th>
+            <th>入手アイテム</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody id="mining-tbody"></tbody>
+      </table>
+      <div class="no-results" id="mining-no-results" style="display:none;">該当するスポットが見つかりません</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: 釣り -->
+<div class="tab-panel" id="tab-fishing">
+  <div class="section">
+    <div class="section-title">釣り（釣り人）— ランク5帯おすすめスポット</div>
+    <div class="section-note">基本戦略: 自分のLvより高い魚を釣る = 経験値が伸びる。スキル振りは経験値UPより場所の格上を優先。</div>
+    <div class="controls">
+      <input type="text" class="search-box" id="fishing-search" placeholder="スポット名・エリア・アイテムで検索...">
+    </div>
+    <div class="stats" id="fishing-stats"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>スポット名</th>
+            <th>エリア</th>
+            <th>必要ER</th>
+            <th>入手アイテム</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody id="fishing-tbody"></tbody>
+      </table>
+      <div class="no-results" id="fishing-no-results" style="display:none;">該当するスポットが見つかりません</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: 木こり -->
+<div class="tab-panel" id="tab-woodcutting">
+  <div class="section">
+    <div class="section-title">木こり（伐採）— ランク5帯おすすめスポット</div>
+    <div class="section-note">伝説チャレンジ「伝説の木を求めて」ではER3+から発生可能だが、ER5で効率が大幅に上がる。</div>
+    <div class="controls">
+      <input type="text" class="search-box" id="wood-search" placeholder="スポット名・エリア・アイテムで検索...">
+    </div>
+    <div class="stats" id="wood-stats"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>スポット名</th>
+            <th>エリア</th>
+            <th>必要ER</th>
+            <th>入手アイテム</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody id="wood-tbody"></tbody>
+      </table>
+      <div class="no-results" id="wood-no-results" style="display:none;">該当するスポットが見つかりません</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: 採取 -->
+<div class="tab-panel" id="tab-foraging">
+  <div class="section">
+    <div class="section-title">採取（野草・野菜・ハチミツなど）</div>
+    <div class="section-note">採取職レベル100は3〜5時間で到達可能（ER5+ルート使用時）。</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>スポット</th>
+            <th>エリア</th>
+            <th>必要ER</th>
+            <th>主な入手物</th>
+          </tr>
+        </thead>
+        <tbody id="foraging-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: 最効率ルート -->
+<div class="tab-panel" id="tab-route">
+  <div class="section">
+    <div class="section-title">最効率ルートの組み方</div>
+    <div class="section-note">採掘×釣りの交互周回（クールタイム中に別職）が最効率ルート。採取職レベル100は3〜5時間で到達可能。</div>
+
+    <div class="route-card">
+      <div class="route-card-step">
+        <div class="route-step-num">1</div>
+        <div class="route-step-body"><strong>ノーズン山地ER5</strong>に上げる。大穴3層目エリアが解禁される。</div>
+      </div>
+      <div class="route-card-step">
+        <div class="route-step-num">2</div>
+        <div class="route-step-body"><strong>グラスファイト鉱床 → レイトウマグロ島</strong>を5分サイクルで交互に周回。採掘と釣りを同時レベリング。</div>
+      </div>
+      <div class="route-card-step">
+        <div class="route-step-num">3</div>
+        <div class="route-step-body">伝説チャレンジ発生中は即対象エリアへ移動：
+          <ul style="margin-left:16px;margin-top:4px;line-height:1.8;">
+            <li>クネック → 伝説ドン・ホーン</li>
+            <li>カラット砂漠西 → 伝説ギンギラダイヤ</li>
+            <li>ハネビラの森 → 伝説の神原木</li>
+          </ul>
+        </div>
+      </div>
+      <div class="route-card-step">
+        <div class="route-step-num">4</div>
+        <div class="route-step-body"><strong>マルチ</strong>ではゲージMAXで伝説チャレンジ確定発生。<strong>ソロ</strong>は塔でランク切替ガチャ。</div>
+      </div>
+      <div class="route-card-step" style="margin-bottom:0;">
+        <div class="route-step-num">5</div>
+        <div class="route-step-body"><strong>アイテムドロップUP装備（最大+110%）</strong>を全身装備してから周回を開始する。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ext-links">
+    <div class="ext-links-title">参考リンク</div>
+    <a href="https://game8.jp/fantasylife-i/690494" class="ext-link" target="_blank" rel="noopener">エリアランクの上げ方とポイントの稼ぎ方（Game8）<span class="ext-link-domain">game8.jp</span></a>
+    <a href="https://game8.jp/fantasylife-i/688590" class="ext-link" target="_blank" rel="noopener">釣り人のスキル振りおすすめと試練（Game8）<span class="ext-link-domain">game8.jp</span></a>
+    <a href="https://game8.jp/fantasylife-i/690203" class="ext-link" target="_blank" rel="noopener">レベル上げの効率的なやり方（Game8）<span class="ext-link-domain">game8.jp</span></a>
+    <a href="https://gamewith.jp/fantasylife-i/498778" class="ext-link" target="_blank" rel="noopener">グラスファイト鉱床の場所と入手アイテム（GameWith）<span class="ext-link-domain">gamewith.jp</span></a>
+    <a href="https://gamewith.jp/fantasylife-i/499359" class="ext-link" target="_blank" rel="noopener">レイトウマグロの効率的な入手方法（GameWith）<span class="ext-link-domain">gamewith.jp</span></a>
+    <a href="https://gamewith.jp/fantasylife-i/497429" class="ext-link" target="_blank" rel="noopener">採掘師のスキル振りおすすめと装備（GameWith）<span class="ext-link-domain">gamewith.jp</span></a>
+    <a href="https://gamewith.jp/fantasylife-i/498960" class="ext-link" target="_blank" rel="noopener">エリアランク上げの効率的なやり方（GameWith）<span class="ext-link-domain">gamewith.jp</span></a>
+    <a href="https://szer.net/fantasy-life-i-gathering-jobs-level-100-fastest-guide" class="ext-link" target="_blank" rel="noopener">採取職 最速Lv100ガイド（szer.net）<span class="ext-link-domain">szer.net</span></a>
+    <a href="https://note.com/utsukinoel/n/n67e4c583301d" class="ext-link" target="_blank" rel="noopener">バカデッカーナ大陸 感想・解説（note）<span class="ext-link-domain">note.com</span></a>
+  </div>
+</div>
+
+<script>
+const MINING_DATA = [
+  ["グラスファイト鉱床", "ノーズン山地（大穴3層目）", "ER5", "古代のオーブ / ブラックオニキス / ダークストーン / 古代エメラルド / 上ミステニア石材", "採掘Lv58〜 / 125万経験値 / 洞窟パンサー近くを登った先"],
+  ["伝説ギンギラスタル", "カラット砂漠西", "ER3（ER5推奨）", "伝説ギンギラダイヤ", "伝説チャレンジ「伝説の鉱床を求めて」でのみ出現"],
+  ["金冠ポイント各種", "バカデッカーナ大陸全域", "ER5", "各エリアの上位鉱石（ミスリル / ブラックメタル等）", "ER5で発生"],
+  ["溶岩鉱床", "ドロドロ溶岩地帯", "ER5", "溶岩の竜王石 / 炎獣系素材", "伝説チャレなし、通常チャレで回す"],
+  ["砂漠鉱床", "カラット砂漠西・東", "ER5", "古代エメラルド系 / 砂漠鉱石", "伝説鉱床と同時に回すと効率◎"],
+];
+
+const FISHING_DATA = [
+  ["レイトウマグロ（金冠シャドー）", "ノーズン山地 南西部の島", "ER5", "レイトウマグロ / 冷凍系素材", "94万経験値 / 5分クールタイム / グラスファイト鉱床の真下"],
+  ["マグマグロ", "ドロドロ溶岩地帯", "ER5", "マグマグロ", "高レベル魚で経験値効率◎"],
+  ["大穴3層目 金冠ポイント", "大穴（ミステニア地下）", "ER5", "王冠シャドー各種", "プレイヤーLvより高い魚を釣るのが経験値最大化の鍵"],
+  ["キーバ諸島 伝説魚ポイント", "キーバ諸島", "ER3+", "伝説魚素材", "伝説チャレ「伝説の魚を求めて」"],
+];
+
+const WOOD_DATA = [
+  ["伝説ゴッドツリー", "ハネビラの森", "ER3+（ER5推奨）", "伝説の神原木 / 神のヌシコケ", "伝説チャレ「伝説の木を求めて」"],
+  ["巨木金冠ポイント", "ツバサキ谷", "ER5", "アース古木 / ウォータ古木", "金冠ポイントで大量入手"],
+  ["キノノコ秘境 上位樹", "キノノコ秘境", "ER5", "キノコ系＋上位木材", "伐採＋採取複合"],
+  ["ガチャダンツリー 古代年代", "ガチャダンツリー", "クリア後", "古代木材", "年代を進めると上位木材が出現"],
+];
+
+const FORAGING_DATA = [
+  ["伝説野菜ポイント", "グランベリー大平原南・西", "ER3+", "伝説野菜素材"],
+  ["ミドリーナ台地（野菜密集）", "ミドリーナ台地", "低ランクから可", "野菜各種（密集しており効率良）"],
+  ["はたらきばち巣", "グランベリー大平原東", "ER5", "秘島はちみつ / 巨大なトゲ"],
+];
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function highlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const escaped = escapeHtml(text);
+  const regex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return escaped.replace(regex, '<mark>$1</mark>');
+}
+
+function renderGatherTable(data, tbodyId, statsId, noResId, q) {
+  const tbody = document.getElementById(tbodyId);
+  const stats = document.getElementById(statsId);
+  const noRes = document.getElementById(noResId);
+  const filtered = q ? data.filter(r => r.join(' ').toLowerCase().includes(q.toLowerCase())) : data;
+  if (stats) stats.textContent = `${filtered.length} 件表示 / 全 ${data.length} 件`;
+  if (!filtered.length) { tbody.innerHTML = ''; if (noRes) noRes.style.display = ''; return; }
+  if (noRes) noRes.style.display = 'none';
+  tbody.innerHTML = filtered.map(r => `<tr>
+    <td class="spot-name">${highlight(r[0],q)}</td>
+    <td class="area-name">${highlight(r[1],q)}</td>
+    <td><span class="er-badge">${highlight(r[2],q)}</span></td>
+    <td class="drop-list">${highlight(r[3],q)}</td>
+    ${r[4] !== undefined ? `<td class="note-text">${highlight(r[4],q)}</td>` : ''}
+  </tr>`).join('');
+}
+
+renderGatherTable(MINING_DATA, 'mining-tbody', 'mining-stats', 'mining-no-results', '');
+renderGatherTable(FISHING_DATA, 'fishing-tbody', 'fishing-stats', 'fishing-no-results', '');
+renderGatherTable(WOOD_DATA, 'wood-tbody', 'wood-stats', 'wood-no-results', '');
+
+// Foraging (4 columns)
+function renderForaging() {
+  document.getElementById('foraging-tbody').innerHTML = FORAGING_DATA.map(r => `<tr>
+    <td class="spot-name">${escapeHtml(r[0])}</td>
+    <td class="area-name">${escapeHtml(r[1])}</td>
+    <td><span class="er-badge">${escapeHtml(r[2])}</span></td>
+    <td class="drop-list">${escapeHtml(r[3])}</td>
+  </tr>`).join('');
+}
+renderForaging();
+
+document.getElementById('mining-search').addEventListener('input', e => renderGatherTable(MINING_DATA, 'mining-tbody', 'mining-stats', 'mining-no-results', e.target.value.trim()));
+document.getElementById('fishing-search').addEventListener('input', e => renderGatherTable(FISHING_DATA, 'fishing-tbody', 'fishing-stats', 'fishing-no-results', e.target.value.trim()));
+document.getElementById('wood-search').addEventListener('input', e => renderGatherTable(WOOD_DATA, 'wood-tbody', 'wood-stats', 'wood-no-results', e.target.value.trim()));
+
+// ===== Tab Navigation =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== Hamburger Menu =====
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navOverlay = document.getElementById('navOverlay');
+const navPanel = document.getElementById('navPanel');
+function toggleMenu() {
+  const isOpen = navPanel.classList.contains('active');
+  hamburgerBtn.classList.toggle('active');
+  navOverlay.classList.toggle('active');
+  navPanel.classList.toggle('active');
+  hamburgerBtn.setAttribute('aria-expanded', !isOpen);
+  hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+hamburgerBtn.addEventListener('click', toggleMenu);
+navOverlay.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu(); });
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'activated') {
+          if (!navigator.serviceWorker.controller) return;
+          window.location.reload();
+        }
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

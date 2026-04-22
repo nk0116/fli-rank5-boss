@@ -31,6 +31,7 @@
   .badge-items { background: #9b59b633; color: #d6a3ff; border: 1px solid #9b59b655; }
   .badge-monster { background: #e74c3c33; color: #ff9999; border: 1px solid #e74c3c55; }
   .badge-gather { background: #3498db33; color: #74b9ff; border: 1px solid #3498db55; }
+  .badge-search { background: #ffd70033; color: #ffd700; border: 1px solid #ffd70055; }
 
   /* Hamburger Menu */
   .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
@@ -69,6 +70,10 @@
     FL攻略TOP
     <div class="nav-link-desc">攻略ページ一覧</div>
   </a>
+  <a href="search.html" class="nav-link">
+    素材横断検索
+    <div class="nav-link-desc">全ページを横断して素材・ボスを検索</div>
+  </a>
   <a href="rank5-overview.html" class="nav-link">
     ランク5攻略サマリー
     <div class="nav-link-desc">周回テンプレ・必須素材・エリア一覧</div>
@@ -105,6 +110,11 @@
 <p class="subtitle">バカデッカーナ大陸の攻略情報</p>
 
 <div class="page-list">
+  <a href="search.html" class="page-card" style="border-color:#ffd70044;">
+    <span class="page-card-badge badge-search">素材検索</span>
+    <div class="page-card-title">素材横断検索</div>
+    <div class="page-card-desc">素材名・ボス名・エリア名を入力すると全ページを横断してヒット箇所を表示。</div>
+  </a>
   <a href="rank5-overview.html" class="page-card">
     <span class="page-card-badge badge-overview">サマリー</span>
     <div class="page-card-title">ランク5攻略サマリー</div>

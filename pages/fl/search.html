@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="/manifest.json">
+<title>ファンタジーライフi - 素材横断検索</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 20px; min-height: 100vh; }
+
+  /* Breadcrumb */
+  .breadcrumb { max-width: 700px; margin: 0 auto 16px; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 56px; }
+  .breadcrumb a { color: #74b9ff; text-decoration: none; }
+  .breadcrumb a:hover { color: #ffd700; }
+  .breadcrumb span { color: #555; margin: 0 6px; }
+
+  h1 { text-align: center; margin-bottom: 6px; font-size: 1.4rem; color: #ffd700; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 24px; }
+
+  /* Search box */
+  .search-wrap { max-width: 700px; margin: 0 auto 16px; position: relative; }
+  .search-input {
+    width: 100%; padding: 14px 48px 14px 18px;
+    border: 2px solid #1e2a4a; border-radius: 12px;
+    background: #16213e; color: #e0e0e0;
+    font-size: 1.05rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: #ffd700; }
+  .search-input::placeholder { color: #555; }
+  .search-clear {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: #555; font-size: 1.2rem; cursor: pointer;
+    display: none; padding: 4px; line-height: 1;
+  }
+  .search-clear.visible { display: block; }
+  .search-clear:hover { color: #ffd700; }
+
+  /* Stats */
+  .stats-bar { max-width: 700px; margin: 0 auto 16px; font-size: 0.8rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+  .stats-count { color: #888; }
+
+  /* Filter chips */
+  .filter-wrap { max-width: 700px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .filter-chip {
+    padding: 5px 14px; border: 1px solid #1e2a4a; border-radius: 20px;
+    background: #16213e; color: #999; cursor: pointer; font-size: 0.78rem;
+    transition: all 0.2s;
+  }
+  .filter-chip:hover { border-color: #ffd700; color: #ffd700; }
+  .filter-chip.active { background: #ffd700; color: #1a1a2e; border-color: #ffd700; font-weight: bold; }
+
+  /* Results */
+  .results-wrap { max-width: 700px; margin: 0 auto; }
+
+  /* Empty / initial state */
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: #555;
+  }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.9rem; line-height: 1.7; }
+  .empty-state .hint { margin-top: 16px; font-size: 0.8rem; color: #444; }
+  .empty-state .hint span { display: inline-block; background: #16213e; border: 1px solid #1e2a4a; border-radius: 6px; padding: 3px 10px; margin: 3px; }
+
+  /* Result card */
+  .result-card {
+    background: #16213e; border: 1px solid #1e2a4a; border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .result-card:hover { border-color: #ffd70066; }
+  .result-card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .result-card-title { font-size: 0.95rem; font-weight: bold; color: #fff; flex: 1; min-width: 0; }
+  .result-tags { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+
+  /* Page tag */
+  .tag-page {
+    display: inline-block; padding: 2px 9px; border-radius: 10px;
+    font-size: 0.7rem; font-weight: bold; white-space: nowrap;
+  }
+  .tag-boss { background: #e74c3c22; color: #ff8888; border: 1px solid #e74c3c44; }
+  .tag-items { background: #9b59b622; color: #d6a3ff; border: 1px solid #9b59b644; }
+  .tag-gathering { background: #3498db22; color: #74b9ff; border: 1px solid #3498db44; }
+  .tag-monsters { background: #e67e2222; color: #ffb347; border: 1px solid #e67e2244; }
+  .tag-overview { background: #ffd70022; color: #ffd700; border: 1px solid #ffd70044; }
+  .tag-levelup { background: #00b89422; color: #00d4a8; border: 1px solid #00b89444; }
+
+  /* Type tag */
+  .tag-type {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 0.68rem; white-space: nowrap;
+  }
+  .tag-monster { background: #e74c3c22; color: #ff8888; border: 1px solid #e74c3c33; }
+  .tag-fish { background: #3498db22; color: #74b9ff; border: 1px solid #3498db33; }
+  .tag-rock { background: #7f8c8d22; color: #b2bec3; border: 1px solid #7f8c8d33; }
+  .tag-tree { background: #27ae6022; color: #55efc4; border: 1px solid #27ae6033; }
+  .tag-equip { background: #9b59b622; color: #d6a3ff; border: 1px solid #9b59b633; }
+  .tag-material { background: #ffd70022; color: #ffd700; border: 1px solid #ffd70033; }
+  .tag-field { background: #e67e2222; color: #ffb347; border: 1px solid #e67e2233; }
+  .tag-legend { background: #8e44ad22; color: #e78bff; border: 1px solid #8e44ad33; }
+
+  /* Result body */
+  .result-body { font-size: 0.82rem; color: #999; line-height: 1.6; }
+  .result-body .label { font-size: 0.72rem; color: #555; margin-right: 4px; }
+  .result-body .row { margin-bottom: 3px; }
+  .result-body .area { color: #74b9ff; }
+  .result-body .drops { color: #aaa; }
+
+  /* Link button */
+  .result-link {
+    display: inline-block; margin-top: 10px;
+    padding: 5px 14px; border: 1px solid #1e2a4a; border-radius: 8px;
+    color: #74b9ff; text-decoration: none; font-size: 0.78rem;
+    transition: all 0.2s;
+  }
+  .result-link:hover { border-color: #ffd700; color: #ffd700; background: #1a1a2e; }
+
+  mark { background: #ffd70044; color: #ffd700; border-radius: 2px; padding: 0 2px; }
+
+  /* No results */
+  .no-results { text-align: center; padding: 48px 20px; color: #555; font-size: 0.9rem; }
+  .no-results strong { color: #888; }
+
+  /* Hamburger Menu */
+  .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #16213e; border: 1px solid #1e2a4a; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
+  .hamburger-btn:hover { border-color: #ffd700; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: #ffd700; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .nav-overlay.active { opacity: 1; visibility: visible; }
+  .nav-panel { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: #16213e; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel.active { right: 0; }
+  .nav-panel-title { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e2a4a; }
+  .nav-section-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid #1e2a4a; }
+  .nav-link { display: block; padding: 10px 14px; margin-bottom: 2px; color: #e0e0e0; text-decoration: none; border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
+  .nav-link:hover { background: #1e2a4a; color: #ffd700; }
+  .nav-link.current { background: #ffd70015; color: #ffd700; font-weight: bold; border-left: 3px solid #ffd700; }
+  .nav-link-desc { font-size: 0.72rem; color: #666; margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 8px; }
+    h1 { font-size: 1.2rem; }
+    .search-input { font-size: 0.95rem; padding: 12px 44px 12px 14px; }
+    .result-card-header { flex-direction: column; gap: 6px; }
+    .result-card-title { font-size: 0.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
+  <div class="nav-panel-title">GameLog</div>
+  <a href="../../index.html" class="nav-link">
+    ポータルTOP
+    <div class="nav-link-desc">ゲーム一覧・進捗管理</div>
+  </a>
+  <div class="nav-section-label">ファンタジーライフi</div>
+  <a href="index.html" class="nav-link">
+    FL攻略TOP
+    <div class="nav-link-desc">攻略ページ一覧</div>
+  </a>
+  <a href="search.html" class="nav-link current">
+    素材横断検索
+    <div class="nav-link-desc">全ページを横断して素材・ボスを検索</div>
+  </a>
+  <a href="rank5-overview.html" class="nav-link">
+    ランク5攻略サマリー
+    <div class="nav-link-desc">周回テンプレ・必須素材・エリア一覧</div>
+  </a>
+  <a href="rank5-boss.html" class="nav-link">
+    ボス一覧
+    <div class="nav-link-desc">エリアランク5以上のボス・ドロップ素材</div>
+  </a>
+  <a href="level-up.html" class="nav-link">
+    レベル上げ
+    <div class="nav-link-desc">レベル帯別おすすめスポット</div>
+  </a>
+  <a href="items.html" class="nav-link">
+    装備・伝説素材
+    <div class="nav-link-desc">真・時装備/伝説素材/ドロップUP</div>
+  </a>
+  <a href="legendary-monsters.html" class="nav-link">
+    伝説ボス・フィールドボス
+    <div class="nav-link-desc">フィールドボス・伝説チャレンジ・討伐稼ぎ</div>
+  </a>
+  <a href="gathering.html" class="nav-link">
+    採集・採掘ガイド
+    <div class="nav-link-desc">採掘/釣り/木こり/採取スポット</div>
+  </a>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../../index.html">GameLog</a>
+  <span>></span>
+  <a href="index.html">ファンタジーライフi</a>
+  <span>></span>
+  素材横断検索
+</div>
+
+<h1>素材横断検索</h1>
+<p class="subtitle">全ページを横断して素材・ボス・スポットを検索</p>
+
+<div class="search-wrap">
+  <input type="search" class="search-input" id="searchInput"
+    placeholder="素材名・エリア名・ボス名で検索..." autocomplete="off" autocorrect="off"
+    aria-label="検索キーワード">
+  <button class="search-clear" id="searchClear" aria-label="クリア">✕</button>
+</div>
+
+<div class="filter-wrap" id="filterWrap">
+  <button class="filter-chip active" data-filter="all">すべて</button>
+  <button class="filter-chip" data-filter="boss">ボス一覧</button>
+  <button class="filter-chip" data-filter="items">装備・素材</button>
+  <button class="filter-chip" data-filter="gathering">採集・採掘</button>
+  <button class="filter-chip" data-filter="monsters">伝説ボス</button>
+  <button class="filter-chip" data-filter="overview">ランク5サマリー</button>
+  <button class="filter-chip" data-filter="levelup">レベル上げ</button>
+</div>
+
+<div class="stats-bar">
+  <span class="stats-count" id="statsCount"></span>
+</div>
+
+<div class="results-wrap" id="resultsWrap">
+  <div class="empty-state" id="emptyState">
+    <div class="icon">🔍</div>
+    <p>素材名・ボス名・エリア名などを入力してください<br>全ページのデータを横断して検索します</p>
+    <div class="hint">
+      <span>伝説ドン・ホーン</span>
+      <span>グラスファイト</span>
+      <span>ノーズン山地</span>
+      <span>伝説ギンギラダイヤ</span>
+      <span>ドロップUP</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// 全ページデータ集約
+// =============================================
+
+// --- ボス一覧 (rank5-boss.html) ---
+// [種別, ランク, 名前, エリア, ドロップ, 備考]
+const BOSS_DATA = [
+  ["モンスター","金冠","石工のゴーレム","カラット砂漠西","太陽のカケラ、太古の核、太古の真核",""],
+  ["魚","金冠","ゴールデンカジキ","カラット砂漠西","ゴールデンカジキ、ゴールデンヒレ、さかなのウロコ",""],
+  ["岩","金冠","地のスタークリスタル","カラット砂漠西","アースのカケラ、土のマナ、エメラルド、ダイヤモンド、上ハッカ鉱、上ミステニア石材",""],
+  ["モンスター","銀冠","オオスナグモ","カラット砂漠西","絹糸、ピンク絹糸、どくのもと",""],
+  ["モンスター","銀冠","オオスナトカゲ","カラット砂漠西","やじゅうの皮、大きなしっぽ、ひらめきの素",""],
+  ["モンスター","銀冠","ビッグゴースト","カラット砂漠西","精霊の粉、魔法の粉、まひのもと、ひらめきの素","夜"],
+  ["モンスター","銀冠","サンドゴーレム","カラット砂漠西","太陽のカケラ、砂岩、トパーズ、ひらめき素","昼"],
+  ["モンスター","銀冠","ハニワ族長","カラット砂漠西","ハニワストーン、キントレー金、砂岩、ひらめきの素",""],
+  ["モンスター","伝説","伝説ギラギラスタル","カラット砂漠西","伝説ギンギラダイヤ",""],
+  ["モンスター","金冠","ロードオブカース","カラット砂漠東","竜骨のツノ、化石のカケラ、闇の玉、ひらめきの素",""],
+  ["魚","金冠","虹のトビウオ","カラット砂漠東","虹のトビウオ、虹色ヒレ、さかなのウロコ",""],
+  ["魚","金冠","地底魚","カラット砂漠東","地底魚、地底ウロコ、さかなのウロコ","ゴンジリ洞窟"],
+  ["岩","金冠","太古の巨大化石","カラット砂漠東","イネムリレッグ化石、イネムリボディ化石、イネムリヘッド化石、古代エメラルド、化石のカケラ、ハッカ鉱、上ミステリア石材","エリアチャレンジ"],
+  ["モンスター","銀冠","ビッグゴースト","カラット砂漠東","精霊の粉、魔法の粉、まひのもと","ゴンジリ洞窟/夜"],
+  ["モンスター","銀冠","サンドゴーレム","カラット砂漠東","太陽のカケラ、砂岩、トパーズ、ひらめき素","ゴンジリ洞窟/昼"],
+  ["モンスター","銀冠","アイアンゴーレム","カラット砂漠東","アクアマリン、命のカケラ、ハルカーナ鉄",""],
+  ["モンスター","伝説","伝説ギンギラスタル","カラット砂漠東","伝説ギンギラダイヤ",""],
+  ["魚","金冠","平原のヌシ","ミドリーナ台地","平原のヌシ、平原のヌシコケ、さかなのウロコ",""],
+  ["モンスター","銀冠","デキャロッテ","ミドリーナ台地","ニンジン、まっかニンジン、ひらめきの素",""],
+  ["モンスター","銀冠","デカヤマグモ","ミドリーナ台地","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","伝説","伝説ジャガキング","ミドリーナ台地","伝説ジャガキング",""],
+  ["モンスター","金冠","グランキマイラ","グランベリー大平原南","風のマナ、まじゅう肉、幻獣肉、巨大なしっぽ、ひらめきの素",""],
+  ["岩","金冠","炎のスタークリスタル","グランベリー大平原南","炎のマナ、ファイアのカケラ、トパーズ、ミステニア銅、上ミステニア石材","グランネーブル洞窟"],
+  ["魚","金冠","クリスタルバス","グランベリー大平原南","クリスタルバス","グランネーブル洞窟"],
+  ["魚","金冠","深海魚","グランベリー大平原南","深海魚","グランネーブル洞窟"],
+  ["モンスター","銀冠","フラッドコヨーテ","グランベリー大平原南","けもののキバ、やじゅうの皮、ひらめきの素",""],
+  ["モンスター","銀冠","ビッググリーンスネーク","グランベリー大平原南","ヘビのウロコ、オオヘビのウロコ、どくのもと",""],
+  ["モンスター","銀冠","キラーベア","グランベリー大平原南","やじゅうの皮、どうぶつのふん、秘島はちみつ、ひらめきの素",""],
+  ["モンスター","銀冠","デカヤマグモ","グランベリー大平原南","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原南","伝説ジャガキング",""],
+  ["木","金冠","炎のエンジェルツリー","グランベリー大平原西","ファイア古木、ファイア原木、炎のマナ",""],
+  ["モンスター","金冠","イネムリドラゴン","グランベリー大平原西","イネムリの涙、イネムリのウロコ、光の玉、巨大なツノ、けもののキバ、けものの皮、火薬のもと、ドラゴン肉、炎のマナ","ランク6以降"],
+  ["モンスター","金冠","キングバハ・ハ","グランベリー大平原西","羊毛、王様羊毛、ワイルドなツノ、ひらめきの素",""],
+  ["モンスター","金冠","ダークトーストス","グランベリー大平原西","ぶあついこうら、闇の炎、ひらめきの素","ランハートのとりで"],
+  ["モンスター","金冠","ダークデキャロッテ","グランベリー大平原西","まっかニンジン、闇色ニンジン、ニンジン、ひらめきの素","ランハートのとりで"],
+  ["モンスター","金冠","ダークブヒーモス","グランベリー大平原西","ひらめきの素","ランハートのとりで"],
+  ["モンスター","銀冠","ダークパンサー","グランベリー大平原西","かたいツメ、ぶっといキバ、謎の石板、ひらめきの素","ランハートのとりで"],
+  ["モンスター","銀冠","ビッグゴースト","グランベリー大平原西","精霊の粉、魔法の粉、まひのもと","夜"],
+  ["モンスター","銀冠","タウロス","グランベリー大平原西","もうじゅう肉、特濃ミルク、もうぎゅうのツノ",""],
+  ["モンスター","銀冠","デカモロコシ","グランベリー大平原西","とうもろこし、火薬のもと、糸ひも、草糸",""],
+  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原西","伝説ジャガキング",""],
+  ["モンスター","銀冠","はたらきばちリーダー","グランベリー大平原東","どくのもと、草原はちみつ、巨大なトゲ",""],
+  ["モンスター","銀冠","デカブラ","グランベリー大平原東","あばれダイコン、カブラの葉",""],
+  ["モンスター","銀冠","ブラックパンサー","グランベリー大平原東","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ","夜"],
+  ["モンスター","伝説","伝説ジャガキング","グランベリー大平原東","伝説ジャガキング",""],
+  ["木","金冠","仙人桜","ハネビラの森","アンパラベリー、サクラ原木、サクラ古木、サクラの蜜、サクラの切り枝",""],
+  ["魚","金冠","桜花のヌシ","ハネビラの森","桜花のヌシ、花のヌシコケ","ハネビラ大樹海"],
+  ["モンスター","金冠","そうげんドラゴン","ハネビラの森","大草原の涙、光の玉、ドラゴン肉、巨大なツノ","ハネビラ大樹海"],
+  ["モンスター","金冠","ゴールデンベエ","ハネビラの森","高貴なやぎ毛、きんいろやぎ毛、やぎ毛、光の玉","ハネビラ大樹海"],
+  ["モンスター","銀冠","サクラノキモドキ","ハネビラの森","サクラ原木、どくのもと、サクランボ",""],
+  ["モンスター","銀冠","オオムチクサ","ハネビラの森","どくのもと、せいれい草、そせい草、まひのもと",""],
+  ["モンスター","銀冠","ブラックパンサー","ハネビラの森","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ",""],
+  ["モンスター","銀冠","キバザル","ハネビラの森","スターアップル、どくのもと、じょうぶなキバ",""],
+  ["モンスター","銀冠","ビシバシドンベア","ハネビラの森","まじゅうの皮、巨大なキバ、巨大なツメ、ひらめきの素",""],
+  ["モンスター","伝説","伝説ゴッドツリー","ハネビラの森","伝説の神原木",""],
+  ["木","金冠","風のエンジェルツリー","キノコノ秘境","ウィンド原木、ウィンド古木、風のマナ",""],
+  ["魚","金冠","森のヌシ","キノコノ秘境","森のヌシ、森のヌシコケ、さかなのウロコ",""],
+  ["モンスター","金冠","怪鳥ナツココ","キノコノ秘境","極彩色の羽毛、怪鳥のオタカラ、怪鳥エッグ、とり肉、ひらめきの素",""],
+  ["モンスター","銀冠","ビッグアップルモンキー","キノコノ秘境","どくのもと、王国アップル",""],
+  ["モンスター","銀冠","キバザル","キノコノ秘境","スターアップル、どくのもと、じょうぶなキバ",""],
+  ["モンスター","銀冠","オオムチクサ","キノコノ秘境","どくのもと、せいれい草、そせい草、まひのもと",""],
+  ["モンスター","銀冠","サクラノキモドキ","キノコノ秘境","サクラ原木、どくのもと、サクランボ",""],
+  ["モンスター","伝説","伝説ゴッドツリー","キノコノ秘境","伝説の神原木",""],
+  ["岩","金冠","風のスタークリスタル","ツバサキ谷","風のマナ、アクアマリン、ハルカーナ鉄、ウィンドのカケラ、上ミステニア石材",""],
+  ["モンスター","金冠","マルマル","ツバサキ谷","風のマナ、虹鳥の羽毛、とり肉、マルマルエッグ、光の玉",""],
+  ["モンスター","銀冠","ビッグアップルモンキー","ツバサキ谷","どくのもと、王国アップル",""],
+  ["モンスター","銀冠","ビッググリーンスネーク","ツバサキ谷","ヘビのウロコ、オオヘビのウロコ、どくのもと",""],
+  ["モンスター","銀冠","フォレストパンサー","ツバサキ谷","けもののツメ、やじゅうの皮",""],
+  ["モンスター","銀冠","ブラックパンサー","ツバサキ谷","やじゅうの皮、かたいツメ、まじゅうの皮、けもののツメ、ぶっといキバ",""],
+  ["モンスター","銀冠","アイアンゴーレム","ツバサキ谷","アクアマリン、命のカケラ、ハルカーナ鉄",""],
+  ["モンスター","伝説","伝説ゴッドツリー","ツバサキ谷","伝説の神原木",""],
+  ["モンスター","金冠","モヒカンザウルス","ドラドロ溶岩地帯","火薬のもと、炎のマナ、燃えるモヒカン、まじゅうのしっぽ、まじゅうの皮、きょうりゅう肉","昼"],
+  ["モンスター","金冠","ガンモエパンサー","ドラドロ溶岩地帯","まじゅうの皮、炎のマナ、かたいツメ、炎獣のキバ、炎獣のツメ","夜"],
+  ["岩","金冠","ゴーレムストーン","ドラドロ溶岩地帯","ルビー、灼熱鉱、ゴーレムのカケラ、上ハッカ鉱",""],
+  ["魚","金冠","マグマグロ","ドラドロ溶岩地帯","マグマグロ、マグマヒレ",""],
+  ["モンスター","銀冠","オオオガララヘビ","ドラドロ溶岩地帯","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
+  ["モンスター","銀冠","アイアンゴーレム","ドラドロ溶岩地帯","アクアマリン、命のカケラ、ハルカーナ鉄",""],
+  ["モンスター","銀冠","キングコブラ","ドラドロ溶岩地帯","どくのもと、巨大なキバ、オオヘビのウロコ、火薬のもと",""],
+  ["モンスター","銀冠","デカヤマグモ","ドラドロ溶岩地帯","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["岩","金冠","魔王の心臓","ドラドロ溶岩地帯","ブラックオニキス、上ミステニア石材、マオーストーン、マオーハート","エリアチャレンジ"],
+  ["岩","金冠","竜の鉤爪","セキネツ山地","上ミステニア石材、ルビー、灼熱鉱、フレイムルビー、古代エメラルド、溶岩の竜王石",""],
+  ["モンスター","金冠","ガンモエパンサー","セキネツ山地","まじゅうの皮、炎のマナ、かたいツメ、炎獣のキバ、炎獣のツメ","夜"],
+  ["木","金冠","地のエンジェルツリー","セキネツ山地","アース古木、アース原木",""],
+  ["モンスター","金冠","イネムリドラゴン","セキネツ山地","イネムリの涙、イネムリのウロコ、光の玉、巨大なツノ、けもののキバ、けものの皮、火薬のもと、ドラゴン肉、炎のマナ","エリアチャレンジ"],
+  ["モンスター","金冠","そうげんドラゴン","セキネツ山地","大草原の涙、光の玉、ドラゴン肉、巨大なツノ","エリアチャレンジ"],
+  ["木","金冠","竜の大樹","セキネツ山地","竜樹の角、竜樹の翼","エリアチャレンジ"],
+  ["モンスター","銀冠","オオオガラヘビ","セキネツ山地","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
+  ["モンスター","銀冠","キングコブラ","セキネツ山地","どくのもと、巨大なキバ、オオヘビのウロコ、火薬のもと",""],
+  ["モンスター","銀冠","デカヤマグモ","セキネツ山地","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","金冠","ロックゴースト","クネック山地","まひのもと、幽体のもと、魔法の粉、精霊の粉、闇の玉、命のカケラ",""],
+  ["モンスター","銀冠","デカヤマグモ","クネック山地","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","伝説","伝説ドン・バハ・ハ","クネック山地","伝説ドンホーン、伝説ドンミート",""],
+  ["モンスター","金冠","こうてつトーストス","キーバ諸島","こうてつのこうら、闇の玉",""],
+  ["木","金冠","水のエンジェルツリー","キーバ諸島","水のマナ、ウォータ原木、ウォータ古木",""],
+  ["モンスター","銀冠","ブラックボックス","キーバ諸島","秘宝袋、金貨袋、銀貨袋",""],
+  ["モンスター","銀冠","オオウミコロガシムシ","キーバ諸島","不思議な物体、魔法の粉、トロピアン深海水、ひらめきの素",""],
+  ["モンスター","銀冠","デカミツキシャーク","キーバ諸島","じょうぶなキバ、きれいなサンゴ","エリアチャレンジ"],
+  ["魚","金冠","神のヌシ","キーバ諸島","神のヌシ、神のヌシコケ","エリアチャレンジ"],
+  ["魚","金冠","ポセイドンカジキ","キーバ諸島","ポセイドンカジキ、海神のヒレ","エリアチャレンジ"],
+  ["モンスター","金冠","クリスタルゴーレム","キーバ諸島","氷結クリスタル、星のカケラ","ランク6以降"],
+  ["モンスター","伝説","伝説ブットビウオ","キーバ諸島","伝説ブットビウオ",""],
+  ["魚","金冠","カジキマグロ","リューノメ山地","カジキマグロ、カジキヒレ",""],
+  ["岩","金冠","水のスタークリスタル","リューノメ山地","アメジスト、ウォータのカケラ、深海鉱、上ミステニア石材",""],
+  ["木","金冠","ジャイアントツリー","リューノメ山地","巨大樹の樹皮、巨大樹の実",""],
+  ["モンスター","銀冠","フラッドコヨーテ","リューノメ山地","けもののキバ、やじゅうの皮、ひらめきの素",""],
+  ["モンスター","銀冠","オオコロガシムシ","リューノメ山地","不思議な物体、きみょうな物体",""],
+  ["モンスター","銀冠","キラーベア","リューノメ山地","やじゅうの皮、どうぶつのふん、秘島はちみつ、ひらめきの素",""],
+  ["モンスター","銀冠","デカヤマグモ","リューノメ山地","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","伝説","伝説ドン・バハ・ハ","リューノメ山地","伝説ドンホーン、伝説ドンミート",""],
+  ["魚","金冠","レイトウマグロ","ノーズン山地","レイトウマグロ、レイトウウロコ、さかなのウロコ",""],
+  ["岩","金冠","グラスファイト鉱床","ノーズン山地","ブラックオニキス、古代のオーブ、ダークストーン、古代エメラルド、上ミステニア石材",""],
+  ["モンスター","銀冠","どうくつパンサー","ノーズン山地","するどいツメ、まじゅうの皮、じょうぶなキバ",""],
+  ["モンスター","銀冠","オオオガララヘビ","ノーズン山地","どくのもと、巨大なキバ、赤ヘビのウロコ",""],
+  ["モンスター","銀冠","ブラックボックス","ノーズン山地","秘宝袋、金貨袋、銀貨袋","ノーズホール洞窟"],
+  ["モンスター","銀冠","デカヤマグモ","ノーズン山地","絹糸、きらめく絹糸","エリアチャレンジ"],
+  ["モンスター","伝説","伝説ドン・バハ・ハ","ノーズン山地","伝説ドンホーン、伝説ドンミート",""],
+];
+
+// --- 装備・伝説素材 (items.html) ---
+// SHINSEI: [装備名, 職業, 性能, 主要素材, 解禁条件]
+const SHINSEI_DATA = [
+  ["真・時のつるぎ", "王国兵士", "攻撃+495", "ウォータのカケラ / 燃えるモヒカン / 伝説ドン・ホーン×10 / 伝説ギンギラダイヤ×10 / 時のつるぎ", "クリア後＋トレジャーパンサー"],
+  ["真・時の聖剣", "傭兵", "攻撃+547", "アースのカケラ / まじゅうクリスタル / 伝説ドン・ホーン×10 / 伝説ギンギラダイヤ×10 / 時の聖剣", "クリア後＋トレジャーパンサー"],
+  ["真・時の弓", "狩人", "攻撃+396", "アース古木 / 竜樹の角 / 伝説の神原木 / 伝説ドン・ホーン / 時の弓", "クリア後＋トレジャーパンサー"],
+  ["真・時の杖", "魔法使い", "攻撃+448", "古代のオーブ / ウォータ古木 / 伝説の神原木 / 伝説ドン・ホーン / 時の杖", "クリア後＋トレジャーパンサー"],
+  ["真・時のピッケル", "採掘師", "さいくつ+495", "溶岩の竜王石 / 神のヌシコケ / 伝説ドン・ホーン / 伝説ギンギラダイヤ / 時のピッケル", "クリア後＋トレジャーパンサー"],
+];
+// MAT: [素材名, 入手チャレンジ, 対象, 発生エリア, 最低ランク]
+const MAT_DATA = [
+  ["伝説ドン・ホーン", "伝説のモンスターを求めて", "伝説ドン・バハ・ハ（討伐）", "クネック山岳", "ER3以上（ER5推奨）"],
+  ["伝説ギンギラダイヤ", "伝説の鉱床を求めて", "伝説ギンギラスタル（採掘）", "カラット砂漠西", "ER3以上（ER5推奨）"],
+  ["伝説の神原木", "伝説の木を求めて", "伝説ゴッドツリー（伐採）", "ハネビラの森", "ER3以上"],
+  ["古代のオーブ", "採掘（金冠）", "グラスファイト鉱床", "ノーズン山地", "ER5"],
+  ["ブラックオニキス", "採掘", "グラスファイト鉱床", "ノーズン山地", "ER5"],
+  ["ダークストーン", "採掘", "グラスファイト鉱床", "ノーズン山地", "ER5"],
+  ["古代エメラルド", "採掘", "グラスファイト鉱床", "ノーズン山地", "ER5"],
+  ["上ミステニア石材", "採掘", "グラスファイト鉱床", "ノーズン山地", "ER5"],
+  ["竜樹の角", "伝説チャレンジ", "各種", "各大陸", "ER3以上"],
+  ["アース古木", "伝説チャレンジ", "各種", "各大陸", "ER3以上"],
+  ["ウォータ古木", "伝説チャレンジ", "各種", "各大陸", "ER3以上"],
+  ["まじゅうクリスタル", "伝説のモンスターを求めて", "伝説級モンスター", "リューノメ山地 / ノーズン山地", "ER3以上"],
+  ["溶岩の竜王石", "採掘 / モンスター", "各種", "ドロドロ溶岩地帯", "ER5推奨"],
+  ["神のヌシコケ", "伝説チャレンジ（木）", "各種", "ハネビラの森 / ツバサキ谷", "ER3以上"],
+];
+
+// --- 採集・採掘 (gathering.html) ---
+// MINING: [スポット名, エリア, 必要ER, 入手アイテム, 備考]
+const MINING_DATA = [
+  ["グラスファイト鉱床", "ノーズン山地（大穴3層目）", "ER5", "古代のオーブ / ブラックオニキス / ダークストーン / 古代エメラルド / 上ミステニア石材", "採掘Lv58〜 / 125万経験値 / 洞窟パンサー近くを登った先"],
+  ["伝説ギンギラスタル", "カラット砂漠西", "ER3（ER5推奨）", "伝説ギンギラダイヤ", "伝説チャレンジ「伝説の鉱床を求めて」でのみ出現"],
+  ["金冠ポイント各種", "バカデッカーナ大陸全域", "ER5", "各エリアの上位鉱石（ミスリル / ブラックメタル等）", "ER5で発生"],
+  ["溶岩鉱床", "ドロドロ溶岩地帯", "ER5", "溶岩の竜王石 / 炎獣系素材", "伝説チャレなし、通常チャレで回す"],
+  ["砂漠鉱床", "カラット砂漠西・東", "ER5", "古代エメラルド系 / 砂漠鉱石", "伝説鉱床と同時に回すと効率◎"],
+];
+// FISHING: [スポット名, エリア, 必要ER, 入手アイテム, 備考]
+const FISHING_DATA = [
+  ["レイトウマグロ（金冠シャドー）", "ノーズン山地 南西部の島", "ER5", "レイトウマグロ / 冷凍系素材", "94万経験値 / 5分クールタイム / グラスファイト鉱床の真下"],
+  ["マグマグロ", "ドロドロ溶岩地帯", "ER5", "マグマグロ", "高レベル魚で経験値効率◎"],
+  ["大穴3層目 金冠ポイント", "大穴（ミステニア地下）", "ER5", "王冠シャドー各種", "プレイヤーLvより高い魚を釣るのが経験値最大化の鍵"],
+  ["キーバ諸島 伝説魚ポイント", "キーバ諸島", "ER3+", "伝説魚素材", "伝説チャレ「伝説の魚を求めて」"],
+];
+// WOOD: [スポット名, エリア, 必要ER, 入手アイテム, 備考]
+const WOOD_DATA = [
+  ["伝説ゴッドツリー", "ハネビラの森", "ER3+（ER5推奨）", "伝説の神原木 / 神のヌシコケ", "伝説チャレ「伝説の木を求めて」"],
+  ["巨木金冠ポイント", "ツバサキ谷", "ER5", "アース古木 / ウォータ古木", "金冠ポイントで大量入手"],
+  ["キノコ秘境 上位樹", "キノコ秘境", "ER5", "キノコ系＋上位木材", "伐採＋採取複合"],
+  ["ガチャダンツリー 古代年代", "ガチャダンツリー", "クリア後", "古代木材", "年代を進めると上位木材が出現"],
+];
+// FORAGING: [スポット名, エリア, 必要ER, 主な入手物]
+const FORAGING_DATA = [
+  ["伝説野菜ポイント", "グランベリー大平原南・西", "ER3+", "伝説野菜素材"],
+  ["ミドリーナ台地（野菜密集）", "ミドリーナ台地", "低ランクから可", "野菜各種（密集しており効率良）"],
+  ["はたらきばち巣", "グランベリー大平原東", "ER5", "秘島はちみつ / 巨大なトゲ"],
+];
+
+// --- 伝説ボス・フィールドボス (legendary-monsters.html) ---
+// FIELD: [種別, 名前, 出現エリア, 発生ランク, 主なドロップ]
+const FIELD_DATA = [
+  ["フィールドボス", "イネムリドラゴン", "王都ミステニア / グランベリー大平原西", "ER5以上で高確率湧き", "ドラゴン肉 / 巨大なツノ"],
+  ["フィールドボス", "そうげんドラゴン", "ウタタネの森", "ER5以上", "ドラゴン肉 / 大草原の涙"],
+  ["フィールドボス", "ガンモエパンサー", "ドロドロ溶岩地帯", "ER5", "炎獣の皮 / 炎獣のキバ / 硬い爪"],
+  ["フィールドボス", "ロードオブカース", "ガチャダンツリー / カラット砂漠東", "ER5以上", "骨竜のツノ / 化石のカケラ / 闇のオーブ / 洞察のエッセンス"],
+  ["フィールドボス", "マルマル", "ガチャダンツリー / ツバサキ谷", "ER3+（ER5で効率良）", "虹の羽根 / 鳥肉 / たまご / 光のオーブ"],
+  ["上位雑魚", "キングバハ・ハ", "グランベリー大平原西", "ER5", "黒羊毛 / 王様羊毛"],
+  ["上位雑魚", "はたらきばちリーダー", "グランベリー大平原東", "ER5", "秘島はちみつ / 巨大なトゲ"],
+  ["特殊ボス", "トレジャーパンサー", "バカデッカーナ大陸 拠点周辺", "ER5推奨", "真・伝説レシピ / 宝箱"],
+  ["周回ボス", "グランキマイラ", "バカデッカーナ大陸", "ER5推奨", "高位素材 / タマゲモノ宝箱"],
+];
+// LEGEND: [エリア, チャレンジ名, 対象ボス, 主ドロップ]
+const LEGEND_DATA = [
+  ["クネック山岳", "伝説のモンスターを求めて", "伝説ドン・バハ・ハ", "伝説ドン・ホーン / 伝説肉 / 洞察のエッセンス"],
+  ["ハネビラの森", "伝説の木を求めて", "伝説ゴッドツリー", "伝説の神原木"],
+  ["ツバサキ谷", "伝説の木を求めて", "伝説ゴッドツリー系", "伝説の神原木"],
+  ["リューノメ山地", "伝説のモンスターを求めて", "伝説級モンスター", "まじゅうクリスタル他"],
+  ["ノーズン山地", "伝説のモンスターを求めて", "伝説級モンスター", "まじゅうクリスタル他"],
+  ["カラット砂漠東", "伝説の鉱床を求めて", "伝説ギンギラスタル", "伝説ギンギラダイヤ"],
+  ["カラット砂漠西", "伝説の鉱床を求めて", "伝説ギンギラスタル", "伝説ギンギラダイヤ"],
+  ["キーバ諸島", "伝説の魚を求めて", "伝説魚", "伝説魚素材"],
+  ["キノノコ秘境", "伝説の木を求めて", "伝説級樹", "伝説の神原木"],
+  ["グランベリー大平原南", "伝説の野菜を求めて", "伝説野菜", "伝説野菜素材"],
+  ["グランベリー大平原西", "伝説の野菜を求めて", "伝説野菜", "伝説野菜素材"],
+];
+
+// --- レベル上げ (level-up.html) ---
+// LEVELUP: [職種, レベル帯, スポット名, 場所/エリア, 説明, コツ]
+const LEVELUP_DATA = [
+  ["戦闘職", "Lv1〜25", "バカデッカーナ大陸 各エリア", "バカデッカーナ大陸", "塔を見つけてマップを開放しながら、自分より10〜20レベル高い敵を狙って経験値を稼ぐ", "ボスは高確率で宝箱を落とすので装備集め・金策も同時にできる"],
+  ["戦闘職", "Lv25〜40", "トロピアン諸島 / ヨホホイ洞窟", "トロピアン諸島", "ボスの近くにファストトラベルできるため周回効率が高い。ヨホホイ洞窟内も合わせて多くのボスが出現", "ファストトラベルポイントからボスまでの距離が近く、複数のボスを1ルートで回れる"],
+  ["戦闘職", "Lv40〜50", "試練の洞窟 B4", "試練の洞窟", "非常に多くの銀冠ボスが出現し、中央には金冠ボス「いねむりドラゴン」もいる。ストーリー6章で解放", "銀冠ボスが密集しているため1周あたりの経験値が多い / いねむりドラゴン"],
+  ["戦闘職", "Lv50〜60", "ツバサキ谷", "ツバサキ谷（バカデッカーナ北東）", "出現するボスの数が多い。エリアランクを上げることで出現する敵のレベルも上がる", "エリアランク上昇で敵レベルも上昇する仕組みを活用"],
+  ["戦闘職", "Lv60〜80", "ガチャダンツリー 800年前以上", "ガチャダンツリー", "ストーリー4章で解放。800年前以上の階層ではLv90超えの敵が出現し、非常に多くの経験値を得られる", "4章クリア後にアクセス可能 / 階層が深いほど敵レベルが高く経験値も増加"],
+  ["戦闘職", "Lv80〜100", "ガチャダンツリー 900年台 モンスターハウス", "ガチャダンツリー", "狭い部屋だけで経験値100万以上をすぐに稼げる最高効率スポット。謎の石板も大量に集められる", "モンスターハウスの敵を1〜2匹残してわざと戦闘不能になりリタイア / 謎の石板も同時に集められる"],
+  ["採取職（木こり）", "終盤", "バカデッカーナ大陸 ランク5エリア", "バカデッカーナ大陸", "エリアランク5以上のエリアでは金冠の木が出現し、1回の伐採で大量の経験値を得られる", "最強装備は真・時のオノ＋採取王シリーズ"],
+  ["採取職（採掘師）", "終盤", "ドラドロ溶岩地帯", "ドラドロ溶岩地帯（バカデッカーナ大陸）", "鉱床が密集しているため採掘師のレベル上げに最適。ランク5以上で金冠鉱床も出現する", "王冠付き鉱床は5分のクールタイム / 大穴3層目の王冠鉱床もLv60付近まで有効"],
+  ["採取職（釣り人）", "終盤", "バカデッカーナ大陸 ランク5エリア", "バカデッカーナ大陸", "エリアランク5以上で金冠の魚影が出現し、高経験値を得られる。ヨホホイ洞窟の金冠「レイトウマグロ」も効率良", "パーティに釣り人の仲間を入れると高レベルの魚を釣りやすくなる"],
+  ["採取職（農家）", "終盤", "ミドリーナ台地", "ミドリーナ台地（バカデッカーナ大陸）", "農家のレベル上げに最高効率のエリア。どこでもゲートを2回使いマップ移動を挟むと移動の手間を省ける", "仲間は農家のみで編成すると自動採取で効率UP"],
+  ["採取職（中盤）", "中盤", "ワコイの祠 周回", "ワコイの祠", "仲間に採取させながら効率よくレベルを上げられるスポット", "仲間に採取系ライフを持たせると自動で手伝ってくれる"],
+  ["制作職", "序盤〜中盤", "各街の制作台", "各街", "その時点で作れる最もレベルの高いアイテムを制作して経験値を稼ぐ。レシピのレベルが自分に近いほど経験値が多い", "スキルボードの経験値アップを最優先で習得する / 素材集めは仲間に任せて効率化"],
+  ["制作職", "終盤", "伝説武器 / 星5装備の制作・打ち直し", "各制作台", "伝説武器や星5装備の制作・打ち直しが最も経験値効率が良い。1回あたりの経験値が非常に高い", "素材確保が大変だが最高効率"],
+  ["経験値UP手段", "全レベル帯", "チョウチョのチャーム", "アクセサリ", "早期/予約特典で入手できるアクセサリ。獲得経験値を+10%上昇させる", ""],
+  ["経験値UP手段", "全レベル帯", "メガネスキル", "装備スキル", "メガネに付くスキルで経験値UP。仲間の装備も効果が重複するため全員にメガネを装備させると最大+80%", "全員にメガネを装備させると大幅UP"],
+  ["経験値UP手段", "全レベル帯", "スキルボード「経験値アップ」", "スキルボード", "採取職・制作職は習得しやすい。戦闘職は王国兵士と魔法使いのみ習得可能。スキルボードはリセットできるため、レベル上げ後に付け替え可能", "スキルボードはリセット可能"],
+];
+
+// --- ランク5攻略サマリー (rank5-overview.html) ---
+// OVERVIEW_MAT: [素材名, 入手方法, 場所, 必要ER, 備考]
+const OVERVIEW_MAT_DATA = [
+  ["伝説ドン・ホーン", "伝説チャレンジ（討伐）", "クネック山岳", "ER3以上（ER5推奨）", "伝説ドン・バハ・ハを討伐"],
+  ["伝説ギンギラダイヤ", "伝説チャレンジ（採掘）", "カラット砂漠西", "ER3以上（ER5推奨）", "伝説ギンギラスタルを採掘"],
+  ["伝説の神原木", "伝説チャレンジ（伐採）", "ハネビラの森", "ER3以上", "伝説ゴッドツリーを伐採"],
+  ["古代のオーブ", "採掘（金冠）", "ノーズン山地（大穴3層目）", "ER5", "グラスファイト鉱床で採掘"],
+  ["溶岩の竜王石", "採掘 / 通常チャレンジ", "ドロドロ溶岩地帯", "ER5推奨", "通常チャレ＋採掘で入手"],
+  ["まじゅうクリスタル", "伝説チャレンジ（討伐）", "リューノメ山地 / ノーズン山地", "ER3以上", ""],
+];
+// OVERVIEW_AREA: [エリア名, タグ種別（カンマ区切り）, 備考]
+const OVERVIEW_AREA_DATA = [
+  ["カラット砂漠西", "討伐, 採掘, 釣り, 伝説チャレ", "伝説ギンギラスタル狙いの主戦場"],
+  ["カラット砂漠東", "討伐, 採掘, 伝説チャレ", "砂漠西とセットで周回"],
+  ["グランベリー大平原南", "討伐, 伝説チャレ", "オムロイの祠周回が効率良"],
+  ["グランベリー大平原西", "討伐, 伐採, 伝説チャレ", "イネムリドラゴン・ランハートのとりで"],
+  ["ハネビラの森", "討伐, 伐採, 釣り, 伝説チャレ", "伝説ゴッドツリー狙いの主戦場"],
+  ["キノコ秘境", "討伐, 伐採, 伝説チャレ", "伐採＋採取＋討伐の複合エリア"],
+  ["ツバサキ谷", "討伐, 採掘, 伐採, 伝説チャレ", "採掘＋採取＋討伐の複合エリア"],
+  ["ドロドロ溶岩地帯", "討伐, 採掘", "伝説チャレなし。ガンモエパンサー周回が主力"],
+  ["セキネツ山地", "討伐, 採掘, 伐採", "伝説チャレなし。雑魚狩り＋採掘が主力"],
+  ["クネック山岳", "討伐, 伝説チャレ", "伝説ドン・バハ・ハ狙いの主戦場"],
+  ["キーバ諸島", "討伐, 釣り, 伐採, 伝説チャレ", "伝説魚チャレンジあり"],
+  ["リューノメ山地", "討伐, 採掘, 伝説チャレ", "まじゅうクリスタル狙い"],
+  ["ノーズン山地", "討伐, 採掘, 釣り, 伝説チャレ, 超効率", "グラスファイト鉱床＋レイトウマグロ島。最効率エリア"],
+];
+// OVERVIEW_TIPS: [項目, 内容]
+const OVERVIEW_TIPS_DATA = [
+  ["ER5解禁", "バカデッカーナ大陸全域で金冠採取ポイントが発生。1採取あたりの経験値・素材量が大幅UP"],
+  ["ER5解禁", "5分クールタイムの銀冠ボスがマップ各地に配置"],
+  ["ER5解禁", "真・時シリーズはストーリークリア後に解禁。ER5帯の伝説素材で仕上げる流れ"],
+  ["周回テンプレ", "アイテムドロップUP装備を全身装備（最大+110%）してから出発。マールショップ評判5でレシピ入手"],
+  ["周回テンプレ", "マルチプレイなら画面上ゲージをMAXにして伝説チャレンジを確定発生させる"],
+  ["周回テンプレ", "ソロなら塔でエリアランクを上げ下げして伝説チャレンジを再抽選（塔ランク切替裏技）"],
+  ["周回テンプレ", "伝説チャレなし時はノーズン山地のグラスファイト鉱床 ⇔ レイトウマグロ島を5分サイクルで交互周回。採掘＋釣りを同時レベリング"],
+  ["注意", "伝説チャレンジ発生中は即対象エリアへ移動。大陸移動するとチャレンジがリセットされるため、編成・装備変更は塔で済ませる"],
+  ["注意", "セキネツ山地・ドロドロ溶岩地帯では伝説チャレンジが発生しないため通常チャレで回す"],
+];
+
+// =============================================
+// 検索インデックス構築
+// =============================================
+
+const INDEX = [];
+
+// ボス一覧
+BOSS_DATA.forEach(r => {
+  INDEX.push({
+    page: 'boss',
+    pageLabel: 'ボス一覧',
+    typeTag: r[0],
+    title: r[2] + (r[1] ? '（' + r[1] + '）' : ''),
+    name: r[2],
+    area: r[3],
+    drops: r[4],
+    note: r[5],
+    searchText: r.join(' '),
+    link: 'rank5-boss.html',
+    linkLabel: 'ボス一覧を開く',
+    meta1: r[0],
+    meta2: r[1],
+  });
+});
+
+// 真・時装備
+SHINSEI_DATA.forEach(r => {
+  INDEX.push({
+    page: 'items',
+    pageLabel: '装備・素材',
+    typeTag: 'equip',
+    title: r[0],
+    name: r[0],
+    area: r[4],
+    drops: r[3],
+    note: '職業: ' + r[1] + ' / ' + r[2],
+    searchText: r.join(' '),
+    link: 'items.html',
+    linkLabel: '装備・伝説素材を開く',
+    meta1: '真・時装備',
+    meta2: r[1],
+  });
+});
+
+// 伝説素材
+MAT_DATA.forEach(r => {
+  INDEX.push({
+    page: 'items',
+    pageLabel: '装備・素材',
+    typeTag: 'material',
+    title: r[0],
+    name: r[0],
+    area: r[3],
+    drops: r[1] + ' / ' + r[2],
+    note: '最低ランク: ' + r[4],
+    searchText: r.join(' '),
+    link: 'items.html',
+    linkLabel: '装備・伝説素材を開く',
+    meta1: '伝説素材',
+    meta2: r[4],
+  });
+});
+
+// 採掘
+MINING_DATA.forEach(r => {
+  INDEX.push({
+    page: 'gathering',
+    pageLabel: '採集・採掘',
+    typeTag: 'rock',
+    title: r[0],
+    name: r[0],
+    area: r[1],
+    drops: r[3],
+    note: '必要ER: ' + r[2] + (r[4] ? ' / ' + r[4] : ''),
+    searchText: r.join(' '),
+    link: 'gathering.html',
+    linkLabel: '採集・採掘ガイドを開く',
+    meta1: '採掘',
+    meta2: r[2],
+  });
+});
+
+// 釣り
+FISHING_DATA.forEach(r => {
+  INDEX.push({
+    page: 'gathering',
+    pageLabel: '採集・採掘',
+    typeTag: 'fish',
+    title: r[0],
+    name: r[0],
+    area: r[1],
+    drops: r[3],
+    note: '必要ER: ' + r[2] + (r[4] ? ' / ' + r[4] : ''),
+    searchText: r.join(' '),
+    link: 'gathering.html',
+    linkLabel: '採集・採掘ガイドを開く',
+    meta1: '釣り',
+    meta2: r[2],
+  });
+});
+
+// 木こり
+WOOD_DATA.forEach(r => {
+  INDEX.push({
+    page: 'gathering',
+    pageLabel: '採集・採掘',
+    typeTag: 'tree',
+    title: r[0],
+    name: r[0],
+    area: r[1],
+    drops: r[3],
+    note: '必要ER: ' + r[2] + (r[4] ? ' / ' + r[4] : ''),
+    searchText: r.join(' '),
+    link: 'gathering.html',
+    linkLabel: '採集・採掘ガイドを開く',
+    meta1: '木こり',
+    meta2: r[2],
+  });
+});
+
+// 採取
+FORAGING_DATA.forEach(r => {
+  INDEX.push({
+    page: 'gathering',
+    pageLabel: '採集・採掘',
+    typeTag: 'tree',
+    title: r[0],
+    name: r[0],
+    area: r[1],
+    drops: r[3],
+    note: '必要ER: ' + r[2],
+    searchText: r.join(' '),
+    link: 'gathering.html',
+    linkLabel: '採集・採掘ガイドを開く',
+    meta1: '採取',
+    meta2: r[2],
+  });
+});
+
+// フィールドボス
+FIELD_DATA.forEach(r => {
+  INDEX.push({
+    page: 'monsters',
+    pageLabel: '伝説ボス',
+    typeTag: 'field',
+    title: r[1],
+    name: r[1],
+    area: r[2],
+    drops: r[4],
+    note: r[0] + ' / ' + r[3],
+    searchText: r.join(' '),
+    link: 'legendary-monsters.html',
+    linkLabel: '伝説ボス一覧を開く',
+    meta1: r[0],
+    meta2: r[3],
+  });
+});
+
+// 伝説チャレンジ
+LEGEND_DATA.forEach(r => {
+  INDEX.push({
+    page: 'monsters',
+    pageLabel: '伝説ボス',
+    typeTag: 'legend',
+    title: r[2] + '（' + r[1] + '）',
+    name: r[2],
+    area: r[0],
+    drops: r[3],
+    note: r[1],
+    searchText: r.join(' '),
+    link: 'legendary-monsters.html',
+    linkLabel: '伝説ボス一覧を開く',
+    meta1: '伝説チャレンジ',
+    meta2: r[0],
+  });
+});
+
+// レベル上げスポット
+LEVELUP_DATA.forEach(r => {
+  INDEX.push({
+    page: 'levelup',
+    pageLabel: 'レベル上げ',
+    typeTag: 'levelup',
+    title: r[2],
+    name: r[2],
+    area: r[3],
+    drops: r[4],
+    note: r[0] + ' / ' + r[1] + (r[5] ? ' / ' + r[5] : ''),
+    searchText: r.join(' '),
+    link: 'level-up.html',
+    linkLabel: 'レベル上げページを開く',
+    meta1: r[0],
+    meta2: r[1],
+  });
+});
+
+// ランク5サマリー 必須素材
+OVERVIEW_MAT_DATA.forEach(r => {
+  INDEX.push({
+    page: 'overview',
+    pageLabel: 'ランク5サマリー',
+    typeTag: 'material',
+    title: r[0],
+    name: r[0],
+    area: r[2],
+    drops: r[1],
+    note: '必要ER: ' + r[3] + (r[4] ? ' / ' + r[4] : ''),
+    searchText: r.join(' '),
+    link: 'rank5-overview.html',
+    linkLabel: 'ランク5サマリーを開く',
+    meta1: 'ランク5必須素材',
+    meta2: r[3],
+  });
+});
+
+// ランク5サマリー エリア一覧
+OVERVIEW_AREA_DATA.forEach(r => {
+  INDEX.push({
+    page: 'overview',
+    pageLabel: 'ランク5サマリー',
+    typeTag: 'overview',
+    title: r[0] + '（ER5エリア）',
+    name: r[0],
+    area: r[0],
+    drops: r[1],
+    note: r[2],
+    searchText: r.join(' '),
+    link: 'rank5-overview.html',
+    linkLabel: 'ランク5サマリーを開く',
+    meta1: 'ER5エリア',
+    meta2: r[1],
+  });
+});
+
+// ランク5サマリー 攻略Tips
+OVERVIEW_TIPS_DATA.forEach(r => {
+  INDEX.push({
+    page: 'overview',
+    pageLabel: 'ランク5サマリー',
+    typeTag: 'overview',
+    title: r[0] + ': ' + r[1].substring(0, 30) + (r[1].length > 30 ? '…' : ''),
+    name: r[0],
+    area: 'バカデッカーナ大陸',
+    drops: '',
+    note: r[1],
+    searchText: r.join(' '),
+    link: 'rank5-overview.html',
+    linkLabel: 'ランク5サマリーを開く',
+    meta1: r[0],
+    meta2: '',
+  });
+});
+
+// =============================================
+// 検索ロジック
+// =============================================
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlight(text, q) {
+  if (!q || !text) return escapeHtml(text || '');
+  const escaped = escapeHtml(text);
+  const regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  return escaped.replace(regex, '<mark>$1</mark>');
+}
+
+const PAGE_TAG_CLASS = {
+  boss: 'tag-boss',
+  items: 'tag-items',
+  gathering: 'tag-gathering',
+  monsters: 'tag-monsters',
+  overview: 'tag-overview',
+  levelup: 'tag-levelup',
+};
+const TYPE_TAG_CLASS = {
+  モンスター: 'tag-monster',
+  魚: 'tag-fish',
+  岩: 'tag-rock',
+  木: 'tag-tree',
+  equip: 'tag-equip',
+  material: 'tag-material',
+  rock: 'tag-rock',
+  fish: 'tag-fish',
+  tree: 'tag-tree',
+  field: 'tag-field',
+  legend: 'tag-legend',
+  levelup: 'tag-levelup',
+  overview: 'tag-overview',
+};
+const TYPE_TAG_LABEL = {
+  モンスター: 'モンスター',
+  魚: '魚',
+  岩: '採掘',
+  木: '木こり',
+  equip: '装備',
+  material: '素材',
+  rock: '採掘',
+  fish: '釣り',
+  tree: '木こり/採取',
+  field: 'フィールドボス',
+  legend: '伝説チャレ',
+  levelup: 'レベル上げ',
+  overview: 'ランク5',
+};
+
+let currentFilter = 'all';
+let currentQuery = '';
+
+function renderResults(query, filter) {
+  const wrap = document.getElementById('resultsWrap');
+  const empty = document.getElementById('emptyState');
+  const stats = document.getElementById('statsCount');
+
+  if (!query) {
+    empty.style.display = '';
+    stats.textContent = '';
+    wrap.querySelectorAll('.result-card, .no-results').forEach(el => el.remove());
+    return;
+  }
+
+  const q = query.toLowerCase();
+  const filtered = INDEX.filter(item => {
+    const pageMatch = filter === 'all' || item.page === filter;
+    const textMatch = item.searchText.toLowerCase().includes(q);
+    return pageMatch && textMatch;
+  });
+
+  wrap.querySelectorAll('.result-card, .no-results').forEach(el => el.remove());
+  empty.style.display = 'none';
+
+  stats.textContent = filtered.length > 0
+    ? filtered.length + ' 件ヒット'
+    : '';
+
+  if (filtered.length === 0) {
+    const div = document.createElement('div');
+    div.className = 'no-results';
+    div.innerHTML = '<strong>「' + escapeHtml(query) + '」</strong> に一致する結果が見つかりませんでした。<br><span style="font-size:0.8rem;color:#444;margin-top:8px;display:block;">別のキーワードを試してみてください</span>';
+    wrap.appendChild(div);
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  filtered.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'result-card';
+
+    const typeLabel = TYPE_TAG_LABEL[item.typeTag] || item.typeTag;
+    const typeClass = TYPE_TAG_CLASS[item.typeTag] || 'tag-field';
+    const pageClass = PAGE_TAG_CLASS[item.page] || 'tag-boss';
+
+    let bodyRows = '';
+    if (item.area) {
+      bodyRows += '<div class="row"><span class="label">エリア</span><span class="area">' + highlight(item.area, query) + '</span></div>';
+    }
+    if (item.drops) {
+      bodyRows += '<div class="row"><span class="label">入手</span><span class="drops">' + highlight(item.drops, query) + '</span></div>';
+    }
+    if (item.note) {
+      bodyRows += '<div class="row"><span class="label">備考</span>' + highlight(item.note, query) + '</div>';
+    }
+
+    card.innerHTML =
+      '<div class="result-card-header">' +
+        '<div class="result-card-title">' + highlight(item.title, query) + '</div>' +
+        '<div class="result-tags">' +
+          '<span class="tag-page ' + pageClass + '">' + escapeHtml(item.pageLabel) + '</span>' +
+          '<span class="tag-type ' + typeClass + '">' + escapeHtml(typeLabel) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="result-body">' + bodyRows + '</div>' +
+      '<a href="' + item.link + '" class="result-link">' + escapeHtml(item.linkLabel) + ' →</a>';
+
+    frag.appendChild(card);
+  });
+  wrap.appendChild(frag);
+}
+
+// =============================================
+// イベント
+// =============================================
+
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+
+let debounceTimer;
+searchInput.addEventListener('input', () => {
+  const val = searchInput.value;
+  searchClear.classList.toggle('visible', val.length > 0);
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    currentQuery = val.trim();
+    renderResults(currentQuery, currentFilter);
+  }, 120);
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  searchClear.classList.remove('visible');
+  currentQuery = '';
+  renderResults('', currentFilter);
+  searchInput.focus();
+});
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    renderResults(currentQuery, currentFilter);
+  });
+});
+
+// =============================================
+// Hamburger Menu
+// =============================================
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navOverlay = document.getElementById('navOverlay');
+const navPanel = document.getElementById('navPanel');
+
+function toggleMenu() {
+  const isOpen = navPanel.classList.contains('active');
+  hamburgerBtn.classList.toggle('active');
+  navOverlay.classList.toggle('active');
+  navPanel.classList.toggle('active');
+  hamburgerBtn.setAttribute('aria-expanded', !isOpen);
+  hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+hamburgerBtn.addEventListener('click', toggleMenu);
+navOverlay.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu();
+});
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'activated') {
+          if (!navigator.serviceWorker.controller) return;
+          window.location.reload();
+        }
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

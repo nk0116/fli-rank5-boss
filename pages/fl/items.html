@@ -567,17 +567,25 @@ function highlight(text, q) {
 }
 
 // 素材名をitem-linkスパンでラップする（MAT_DETAILに登録された素材のみ）
+// 処理順: 1.エスケープ → 2.item-linkラップ → 3.テキスト部分のみhighlight
+// （先にhighlightすると<mark>タグが素材名を分断してマッチ失敗するため逆順にする）
 function wrapItemLinks(text, q) {
-  const hl = highlight(text, q);
-  // すでにHTMLが含まれている場合はそのまま返す（markタグ対応）
-  // MAT_DETAILのキーにマッチする素材名をスパンでラップ
-  let result = hl;
+  // 1. HTMLエスケープ（生テキスト状態でitem-linkを適用するため先に行う）
+  let result = escapeHtml(text);
+  // 2. MAT_DETAILのキーにマッチする素材名をitem-linkスパンでラップ
   Object.keys(MAT_DETAIL).forEach(name => {
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // <mark>タグの中にあるかもしれないので、タグ属性の中はスキップ
-    const regex = new RegExp(`(?<!data-item=")(?<!>)(${escaped})(?!</span>)`, 'g');
-    result = result.replace(regex, `<span class="item-link" data-item="${name}" role="button" tabindex="0" aria-label="${name}の入手方法を見る">$1</span>`);
+    const escapedName = escapeHtml(name);
+    const regex = new RegExp(escapedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    result = result.replace(regex, `<span class="item-link" data-item="${escapedName}" role="button" tabindex="0" aria-label="${escapedName}の入手方法を見る">${escapedName}</span>`);
   });
+  // 3. テキストノード部分のみhighlightを適用（タグ属性の中は変更しない）
+  if (q) {
+    const qRegex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    result = result.replace(/(<[^>]*>)|([^<]+)/g, (match, tag, textPart) => {
+      if (tag) return tag;
+      return textPart ? textPart.replace(qRegex, '<mark>$1</mark>') : match;
+    });
+  }
   return result;
 }
 

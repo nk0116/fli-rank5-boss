@@ -599,7 +599,11 @@ function renderTable(data, tbodyId, statsId, noResultId, q) {
     ).join('');
   } else {
     tbody.innerHTML = filtered.map(row =>
-      '<tr>' + row.map(cell => `<td>${highlight(cell, q)}</td>`).join('') + '</tr>'
+      '<tr>' + row.map((cell, i) => {
+        // 主要素材列（index 3）はitem-linkでラップ
+        const content = i === 3 ? wrapItemLinks(cell, q) : highlight(cell, q);
+        return `<td>${content}</td>`;
+      }).join('') + '</tr>'
     ).join('');
   }
 }

@@ -113,6 +113,93 @@
     tbody td:nth-child(4)::before { content: "主要素材"; }
     tbody td:nth-child(5)::before { content: "解禁条件"; }
   }
+
+  /* ===== Item Modal ===== */
+  .item-link {
+    color: #ffd700;
+    text-decoration: underline dotted;
+    cursor: pointer;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .item-link:hover { color: #ffe55c; text-decoration: underline; }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.25s, visibility 0.25s;
+  }
+  .modal-overlay.active { opacity: 1; visibility: visible; }
+
+  .modal-box {
+    background: #16213e;
+    border: 1px solid #ffd70055;
+    border-radius: 14px;
+    padding: 24px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    transform: translateY(16px);
+    transition: transform 0.25s;
+  }
+  .modal-overlay.active .modal-box { transform: translateY(0); }
+
+  .modal-close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: none;
+    color: #888; font-size: 1.3rem;
+    cursor: pointer; line-height: 1; padding: 4px 8px;
+    border-radius: 6px; transition: all 0.15s;
+  }
+  .modal-close:hover { color: #ffd700; background: #1e2a4a; }
+
+  .modal-title {
+    font-size: 1.05rem; font-weight: bold;
+    color: #ffd700; margin-bottom: 16px;
+    padding-right: 32px; line-height: 1.4;
+  }
+  .modal-section { margin-bottom: 14px; }
+  .modal-label {
+    font-size: 0.72rem; color: #888;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+  .modal-value { font-size: 0.88rem; color: #ddd; line-height: 1.7; }
+  .modal-value .highlight { color: #74b9ff; font-weight: bold; }
+  .modal-value .er { color: #ffeaa7; }
+  .modal-tag {
+    display: inline-block; padding: 2px 10px;
+    border-radius: 10px; font-size: 0.75rem;
+    background: #ffd70022; color: #ffd700;
+    border: 1px solid #ffd70044; margin-right: 4px; margin-bottom: 4px;
+  }
+  .modal-divider { border: none; border-top: 1px solid #1e2a4a; margin: 14px 0; }
+  .modal-note {
+    font-size: 0.8rem; color: #888;
+    background: #0f0f1a; border-radius: 6px;
+    padding: 8px 12px;
+    border-left: 3px solid #ffd70055;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 600px) {
+    .modal-overlay { align-items: flex-end; }
+    .modal-box {
+      border-radius: 18px 18px 0 0;
+      max-height: 80vh;
+      width: 100%;
+      max-width: 100%;
+      padding: 20px 16px 32px;
+      transform: translateY(100%);
+    }
+    .modal-overlay.active .modal-box { transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -319,7 +406,132 @@
   </div>
 </div>
 
+<!-- ===== Item Modal ===== -->
+<div class="modal-overlay" id="itemModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="閉じる">✕</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
 <script>
+// ===== 素材詳細データ（モーダル用） =====
+const MAT_DETAIL = {
+  "伝説ドン・ホーン": {
+    method: "伝説チャレンジ「伝説のモンスターを求めて」",
+    area: "クネック山岳 / リューノメ山地 / ノーズン山地",
+    target: "伝説ドン・バハ・ハ を討伐",
+    minRank: "ER3以上（ER5推奨）",
+    tips: "ソロなら塔でエリアランクを上げ下げして伝説チャレンジを再抽選（塔ランク切替裏技）。マルチなら画面上部ゲージをMAXにして確定発生させる。",
+    usedIn: "真・時のつるぎ / 真・時の聖剣 / 真・時の弓 / 真・時の杖 / 真・時のピッケル"
+  },
+  "伝説ギンギラダイヤ": {
+    method: "伝説チャレンジ「伝説の鉱床を求めて」",
+    area: "カラット砂漠西 / カラット砂漠東",
+    target: "伝説ギンギラスタル を採掘",
+    minRank: "ER3以上（ER5推奨）",
+    tips: "砂漠鉱床と同時周回で効率◎。伝説チャレンジ発生中は即対象エリアへ移動すること。",
+    usedIn: "真・時のつるぎ / 真・時の聖剣 / 真・時のピッケル"
+  },
+  "伝説の神原木": {
+    method: "伝説チャレンジ「伝説の木を求めて」",
+    area: "ハネビラの森 / ツバサキ谷 / キノコノ秘境",
+    target: "伝説ゴッドツリー を伐採",
+    minRank: "ER3以上",
+    tips: "神のヌシコケも同時に入手できる場合あり。",
+    usedIn: "真・時の弓 / 真・時の杖"
+  },
+  "古代のオーブ": {
+    method: "採掘（金冠ポイント）",
+    area: "ノーズン山地（大穴3層目）",
+    target: "グラスファイト鉱床（金冠）",
+    minRank: "ER5 / 採掘Lv58推奨",
+    tips: "洞窟パンサー近くを登った先にある鉱床。125万経験値。5分クールタイムあり。グラスファイト鉱床からはブラックオニキス・ダークストーン・古代エメラルド・上ミステニア石材も入手可能。",
+    usedIn: "真・時の杖"
+  },
+  "ブラックオニキス": {
+    method: "採掘",
+    area: "ノーズン山地（大穴3層目）",
+    target: "グラスファイト鉱床",
+    minRank: "ER5",
+    tips: "グラスファイト鉱床から採掘。ドロドロ溶岩地帯の魔王の心臓（金冠）からも入手可能。",
+    usedIn: "ドロップUP装備の素材として使用"
+  },
+  "ダークストーン": {
+    method: "採掘",
+    area: "ノーズン山地（大穴3層目）",
+    target: "グラスファイト鉱床",
+    minRank: "ER5",
+    tips: "グラスファイト鉱床から採掘。古代のオーブなどと同時入手できる。",
+    usedIn: "各種装備素材"
+  },
+  "古代エメラルド": {
+    method: "採掘",
+    area: "ノーズン山地（大穴3層目） / カラット砂漠東 / セキネツ山地",
+    target: "グラスファイト鉱床 / 太古の巨大化石 / 竜の鉤爪",
+    minRank: "ER5",
+    tips: "グラスファイト鉱床が主要ルート。カラット砂漠東の太古の巨大化石（エリアチャレンジ）からも入手可能。",
+    usedIn: "各種装備素材"
+  },
+  "上ミステニア石材": {
+    method: "採掘",
+    area: "ノーズン山地 / セキネツ山地 / カラット砂漠東 / ドラドロ溶岩地帯 / ツバサキ谷",
+    target: "グラスファイト鉱床 / 各種金冠鉱床",
+    minRank: "ER5",
+    tips: "多数のエリアで入手可能。グラスファイト鉱床周回が最効率。",
+    usedIn: "各種装備・建築素材"
+  },
+  "竜樹の角": {
+    method: "伝説チャレンジ / エリアチャレンジ",
+    area: "セキネツ山地（竜の大樹）/ 各大陸の伝説チャレンジ",
+    target: "竜の大樹（エリアチャレンジ）",
+    minRank: "ER3以上",
+    tips: "セキネツ山地の竜の大樹エリアチャレンジが確実。伝説チャレンジ中にも各種として入手できる場合あり。",
+    usedIn: "真・時の弓"
+  },
+  "アース古木": {
+    method: "伝説チャレンジ / 金冠木材",
+    area: "セキネツ山地（地のエンジェルツリー）/ 各大陸",
+    target: "地のエンジェルツリー（金冠）",
+    minRank: "ER3以上",
+    tips: "セキネツ山地の地のエンジェルツリーから入手。ツバサキ谷の金冠ポイントでも大量入手可能。",
+    usedIn: "真・時の弓"
+  },
+  "ウォータ古木": {
+    method: "伝説チャレンジ / 金冠木材",
+    area: "キーバ諸島（水のエンジェルツリー）/ 各大陸",
+    target: "水のエンジェルツリー（金冠）",
+    minRank: "ER3以上",
+    tips: "キーバ諸島の水のエンジェルツリーから入手。伝説チャレンジ中にも各種として入手できる場合あり。",
+    usedIn: "真・時の杖"
+  },
+  "まじゅうクリスタル": {
+    method: "伝説チャレンジ「伝説のモンスターを求めて」",
+    area: "リューノメ山地 / ノーズン山地",
+    target: "伝説級モンスター を討伐",
+    minRank: "ER3以上",
+    tips: "伝説ドン・バハ・ハ狙いのついでにクネック山岳でも入手可能な場合あり。伝説チャレンジ発生を待って周回。",
+    usedIn: "真・時の聖剣"
+  },
+  "溶岩の竜王石": {
+    method: "採掘 / 通常チャレンジ",
+    area: "ドロドロ溶岩地帯 / セキネツ山地（竜の鉤爪）",
+    target: "溶岩鉱床 / 竜の鉤爪（金冠）",
+    minRank: "ER5推奨",
+    tips: "ドロドロ溶岩地帯では伝説チャレンジが発生しないため通常チャレ＋採掘で回す。ガンモエパンサー周回と組み合わせると効率◎。",
+    usedIn: "真・時のピッケル"
+  },
+  "神のヌシコケ": {
+    method: "伝説チャレンジ（木）/ 金冠釣り",
+    area: "ハネビラの森 / ツバサキ谷",
+    target: "伝説ゴッドツリー（伐採）/ 各種金冠ヌシ",
+    minRank: "ER3以上",
+    tips: "ハネビラの森やツバサキ谷の伝説チャレンジ「伝説の木を求めて」で入手。金冠の平原のヌシ（ミドリーナ台地）からも類似素材が入手可能。",
+    usedIn: "真・時のピッケル"
+  },
+};
+
 // ===== Data =====
 const SHINSEI_DATA = [
   ["真・時のつるぎ", "王国兵士", "攻撃+495", "ウォータのカケラ / 燃えるモヒカン / 伝説ドン・ホーン×10 / 伝説ギンギラダイヤ×10 / 時のつるぎ", "クリア後＋トレジャーパンサー"],
@@ -354,6 +566,21 @@ function highlight(text, q) {
   return escaped.replace(regex, '<mark>$1</mark>');
 }
 
+// 素材名をitem-linkスパンでラップする（MAT_DETAILに登録された素材のみ）
+function wrapItemLinks(text, q) {
+  const hl = highlight(text, q);
+  // すでにHTMLが含まれている場合はそのまま返す（markタグ対応）
+  // MAT_DETAILのキーにマッチする素材名をスパンでラップ
+  let result = hl;
+  Object.keys(MAT_DETAIL).forEach(name => {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // <mark>タグの中にあるかもしれないので、タグ属性の中はスキップ
+    const regex = new RegExp(`(?<!data-item=")(?<!>)(${escaped})(?!</span>)`, 'g');
+    result = result.replace(regex, `<span class="item-link" data-item="${name}" role="button" tabindex="0" aria-label="${name}の入手方法を見る">$1</span>`);
+  });
+  return result;
+}
+
 function renderTable(data, tbodyId, statsId, noResultId, q) {
   const tbody = document.getElementById(tbodyId);
   const stats = document.getElementById(statsId);
@@ -362,9 +589,19 @@ function renderTable(data, tbodyId, statsId, noResultId, q) {
   stats.textContent = `${filtered.length} 件表示 / 全 ${data.length} 件`;
   if (filtered.length === 0) { tbody.innerHTML = ''; noRes.style.display = ''; return; }
   noRes.style.display = 'none';
-  tbody.innerHTML = filtered.map(row =>
-    '<tr>' + row.map(cell => `<td>${highlight(cell, q)}</td>`).join('') + '</tr>'
-  ).join('');
+  // mat-tbody の場合は素材名（1列目）をitem-linkでラップ
+  if (tbodyId === 'mat-tbody') {
+    tbody.innerHTML = filtered.map(row =>
+      '<tr>' + row.map((cell, i) => {
+        const content = i === 0 ? `<span class="item-link" data-item="${escapeHtml(cell)}" role="button" tabindex="0" aria-label="${escapeHtml(cell)}の入手方法を見る">${highlight(cell, q)}</span>` : highlight(cell, q);
+        return `<td>${content}</td>`;
+      }).join('') + '</tr>'
+    ).join('');
+  } else {
+    tbody.innerHTML = filtered.map(row =>
+      '<tr>' + row.map(cell => `<td>${highlight(cell, q)}</td>`).join('') + '</tr>'
+    ).join('');
+  }
 }
 
 function initTable(searchId, data, tbodyId, statsId, noResultId) {
@@ -403,6 +640,65 @@ function toggleMenu() {
 hamburgerBtn.addEventListener('click', toggleMenu);
 navOverlay.addEventListener('click', toggleMenu);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu(); });
+
+// ===== Item Modal =====
+const itemModal = document.getElementById('itemModal');
+const modalClose = document.getElementById('modalClose');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+
+function openItemModal(name) {
+  const d = MAT_DETAIL[name];
+  modalTitle.textContent = name;
+  if (!d) {
+    modalBody.innerHTML = '<p style="color:#888;font-size:0.88rem;">この素材の詳細データは現在準備中です。</p>';
+  } else {
+    let html = '';
+    html += `<div class="modal-section"><div class="modal-label">入手方法</div><div class="modal-value">${escapeHtml(d.method)}</div></div>`;
+    html += `<div class="modal-section"><div class="modal-label">入手場所</div><div class="modal-value highlight"><span class="highlight">${escapeHtml(d.area)}</span></div></div>`;
+    html += `<div class="modal-section"><div class="modal-label">対象</div><div class="modal-value">${escapeHtml(d.target)}</div></div>`;
+    html += `<div class="modal-section"><div class="modal-label">最低ランク</div><div class="modal-value"><span class="er">${escapeHtml(d.minRank)}</span></div></div>`;
+    if (d.usedIn) {
+      html += `<hr class="modal-divider"><div class="modal-section"><div class="modal-label">使用装備</div><div class="modal-value">${escapeHtml(d.usedIn)}</div></div>`;
+    }
+    if (d.tips) {
+      html += `<hr class="modal-divider"><div class="modal-section"><div class="modal-label">攻略メモ</div><div class="modal-note">${escapeHtml(d.tips)}</div></div>`;
+    }
+    modalBody.innerHTML = html;
+  }
+  itemModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  modalClose.focus();
+}
+
+function closeItemModal() {
+  itemModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeItemModal);
+itemModal.addEventListener('click', e => { if (e.target === itemModal) closeItemModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && itemModal.classList.contains('active')) closeItemModal();
+});
+
+// item-link クリックをイベント委譲で処理（動的レンダリング対応）
+document.addEventListener('click', e => {
+  const link = e.target.closest('.item-link');
+  if (link) {
+    e.preventDefault();
+    openItemModal(link.dataset.item);
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    const link = e.target.closest('.item-link');
+    if (link) {
+      e.preventDefault();
+      openItemModal(link.dataset.item);
+    }
+  }
+});
 </script>
 <script>
 if ('serviceWorker' in navigator) {

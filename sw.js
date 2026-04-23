@@ -1,6 +1,6 @@
 // Service Worker for GameLog
 // バージョンを変更するとキャッシュが全更新される
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v-20260423230138';
 const CACHE_NAME = 'gamelog-' + CACHE_VERSION;
 
 // キャッシュ対象のファイル一覧

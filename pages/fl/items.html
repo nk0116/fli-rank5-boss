@@ -112,6 +112,12 @@
     tbody td:nth-child(3)::before { content: "性能"; }
     tbody td:nth-child(4)::before { content: "主要素材"; }
     tbody td:nth-child(5)::before { content: "解禁条件"; }
+    /* 時シリーズレシピテーブル用ラベル上書き */
+    .recipe-table tbody td:nth-child(1)::before { content: "装備名"; }
+    .recipe-table tbody td:nth-child(2)::before { content: "レシピ入手場所"; }
+    .recipe-table tbody td:nth-child(3)::before { content: "マップ内位置"; }
+    .recipe-table tbody td:nth-child(4)::before { content: "制作職業"; }
+    .recipe-table tbody td:nth-child(5)::before { content: "備考"; }
   }
 
   /* ===== Item Modal ===== */
@@ -272,6 +278,77 @@
 
 <!-- Tab: 真・時装備 -->
 <div class="tab-panel active" id="tab-shinsei">
+
+  <!-- 時シリーズ（真でない）レシピ入手場所 -->
+  <div class="section">
+    <div class="section-title">時シリーズ（真でない方）レシピ入手場所</div>
+    <div class="section-note">バカデッカーナ大陸到達後に入手可能。各エリアのフィールドに設置された<strong style="color:#ffeaa7;">像（祠）</strong>に触れるだけでレシピを入手できる。まず時シリーズを制作し、その後トレジャーパンサーで真シリーズへ進化させる。</div>
+    <div class="table-wrap">
+      <table class="recipe-table">
+        <thead>
+          <tr>
+            <th>装備名</th>
+            <th>レシピ入手場所</th>
+            <th>マップ内位置</th>
+            <th>制作職業</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="item-link" data-item="時のつるぎ" role="button" tabindex="0" aria-label="時のつるぎの入手方法を見る">時のつるぎ</span></td>
+            <td>ドラドロ溶岩地帯</td>
+            <td>北の崖下にある像</td>
+            <td><span class="job-badge">鍛冶師</span></td>
+            <td>制作力830以上</td>
+          </tr>
+          <tr>
+            <td><span class="item-link" data-item="時の聖剣" role="button" tabindex="0" aria-label="時の聖剣の入手方法を見る">時の聖剣</span></td>
+            <td>グランベリー大平原西</td>
+            <td>ランハートのとりで2階・西側の像</td>
+            <td><span class="job-badge">鍛冶師</span></td>
+            <td>城内（ストーリー7章以降）</td>
+          </tr>
+          <tr>
+            <td><span class="item-link" data-item="時の弓" role="button" tabindex="0" aria-label="時の弓の入手方法を見る">時の弓</span></td>
+            <td>カラット砂漠西</td>
+            <td>高台にある像</td>
+            <td><span class="job-badge">弓師</span></td>
+            <td>制作力830以上</td>
+          </tr>
+          <tr>
+            <td><span class="item-link" data-item="時の杖" role="button" tabindex="0" aria-label="時の杖の入手方法を見る">時の杖</span></td>
+            <td>キノノコ秘境</td>
+            <td>浜辺にある像</td>
+            <td><span class="job-badge">魔道師</span></td>
+            <td>制作力830以上</td>
+          </tr>
+          <tr>
+            <td><span class="item-link" data-item="時のピッケル" role="button" tabindex="0" aria-label="時のピッケルの入手方法を見る">時のピッケル</span></td>
+            <td>グランベリー大平原南</td>
+            <td>グランネーブル洞窟最奥にある像</td>
+            <td><span class="job-badge">採掘師</span></td>
+            <td>洞窟内・最奥まで進む必要あり</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">制作素材（共通パターン）</div>
+      <div class="info-card-body">
+        <p>時シリーズはいずれも以下の構成が基本。カケラ系素材の種類のみ装備ごとに異なる。</p>
+        <ul>
+          <li><strong>伝説ギンギラダイヤ</strong> ×3</li>
+          <li><strong>伝説ドン・ホーン</strong> ×1</li>
+          <li><strong>ゴールドインゴット</strong> ×3</li>
+          <li><strong>ダークウッド古木</strong> ×1</li>
+          <li><strong>カケラ系素材</strong> ×1（つるぎ:ファイア / 聖剣:アース / 弓・杖:ウィンド等）</li>
+        </ul>
+        <p style="margin-top:8px;">完成後は<strong>バカデッカーナ拠点のトレジャーパンサー</strong>に話しかけて「真・時シリーズ」のレシピを入手できる。</p>
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-title">真・時シリーズ一覧</div>
     <div class="section-note">ストーリークリア後に解禁。真・伝説レシピから作成。対象の伝説装備を先に作り、バカデッカーナ拠点のトレジャーパンサーに話しかけるとレシピ入手。</div>
@@ -529,6 +606,70 @@ const MAT_DETAIL = {
     minRank: "ER3以上",
     tips: "ハネビラの森やツバサキ谷の伝説チャレンジ「伝説の木を求めて」で入手。金冠の平原のヌシ（ミドリーナ台地）からも類似素材が入手可能。",
     usedIn: "真・時のピッケル"
+  },
+  "ウォータのカケラ": {
+    method: "採掘（水のスタークリスタル）",
+    area: "イミシーンの洞窟（トロピアン諸島）/ リューノメ山地",
+    target: "水のスタークリスタル（採掘）",
+    minRank: "採掘Lv35以上（ER5推奨）",
+    tips: "トロピアン諸島の銀鉱床がある島にあるイミシーンの洞窟の最奥が主要入手ルート。リューノメ山地ER5でも入手可能。水のスタークリスタルからは水のマナ・深海鉱・アメジストも同時入手できる。",
+    usedIn: "時のつるぎ（制作素材）/ 真・時のつるぎ"
+  },
+  "アースのカケラ": {
+    method: "採掘（地のスタークリスタル）",
+    area: "キントレー島の試練の洞窟B2（北西）/ カラット砂漠西",
+    target: "地のスタークリスタル（採掘）",
+    minRank: "ER5推奨",
+    tips: "キントレー島の試練の洞窟B2（北西エリア）が主要入手ルート。カラット砂漠西ER5でも入手可能。採掘師マスターの試練「大地の息吹」でも5個要求される。",
+    usedIn: "時の聖剣（制作素材）/ 真・時の聖剣"
+  },
+  "燃えるモヒカン": {
+    method: "モンスター討伐（モヒカンザウルス）/ 行商人",
+    area: "拠点の大穴3層目（昼）/ ドラドロ溶岩地帯",
+    target: "モヒカンザウルス（ほのお属性）を討伐",
+    minRank: "ER5推奨（ドラドロ溶岩地帯）",
+    tips: "拠点の大穴3層目（昼）に出現するモヒカンザウルスが入手しやすい。ドラドロ溶岩地帯ER5でも出現。バカデッカーナ大陸にランダム出現する行商人からも購入可能。",
+    usedIn: "時のつるぎ（制作素材）/ 真・時のつるぎ"
+  },
+  "時のつるぎ": {
+    method: "レシピ入手→鍛冶師で制作",
+    area: "ドラドロ溶岩地帯（北の崖下）",
+    target: "像（祠）に触れてレシピ入手",
+    minRank: "制作力830以上 / バカデッカーナ大陸到達後",
+    tips: "ドラドロ溶岩地帯の北側・崖下にある像に触れてレシピ入手。制作素材：伝説ギンギラダイヤ×3、伝説ドン・ホーン×1、ゴールドインゴット×3、ダークウッド古木×1、ファイアのカケラ×1。完成後、トレジャーパンサーで「真・時のつるぎ」レシピを入手できる。",
+    usedIn: "真・時のつるぎ（素材として使用）"
+  },
+  "時の聖剣": {
+    method: "レシピ入手→鍛冶師で制作",
+    area: "グランベリー大平原西（ランハートのとりで2階西側）",
+    target: "像（祠）に触れてレシピ入手",
+    minRank: "制作力830以上 / バカデッカーナ大陸到達後",
+    tips: "グランベリー大平原西にあるランハートのとりで2階・西側の像に触れてレシピ入手。城内ダンジョンのためストーリー7章以降から入れる。完成後、トレジャーパンサーで「真・時の聖剣」レシピを入手できる。",
+    usedIn: "真・時の聖剣（素材として使用）"
+  },
+  "時の弓": {
+    method: "レシピ入手→弓師で制作",
+    area: "カラット砂漠西（高台）",
+    target: "像（祠）に触れてレシピ入手",
+    minRank: "制作力830以上 / バカデッカーナ大陸到達後",
+    tips: "カラット砂漠西の高台にある像に触れてレシピ入手。制作素材に伝説ギンギラダイヤ・伝説ドン・ホーンが必要。完成後、トレジャーパンサーで「真・時の弓」レシピを入手できる。",
+    usedIn: "真・時の弓（素材として使用）"
+  },
+  "時の杖": {
+    method: "レシピ入手→魔道師で制作",
+    area: "キノノコ秘境（浜辺）",
+    target: "像（祠）に触れてレシピ入手",
+    minRank: "制作力830以上 / バカデッカーナ大陸到達後",
+    tips: "キノノコ秘境の浜辺にある像に触れてレシピ入手。制作素材に伝説ギンギラダイヤ・伝説ドン・ホーンが必要。完成後、トレジャーパンサーで「真・時の杖」レシピを入手できる。",
+    usedIn: "真・時の杖（素材として使用）"
+  },
+  "時のピッケル": {
+    method: "レシピ入手→採掘師で制作",
+    area: "グランベリー大平原南（グランネーブル洞窟最奥）",
+    target: "像（祠）に触れてレシピ入手",
+    minRank: "制作力830以上 / バカデッカーナ大陸到達後",
+    tips: "グランベリー大平原南にあるグランネーブル洞窟の最奥にある像に触れてレシピ入手。洞窟内を進む必要があるため事前に準備を。完成後、トレジャーパンサーで「真・時のピッケル」レシピを入手できる。",
+    usedIn: "真・時のピッケル（素材として使用）"
   },
 };
 

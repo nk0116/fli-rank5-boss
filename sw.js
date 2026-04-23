@@ -1,6 +1,6 @@
 // Service Worker for GameLog
 // バージョンを変更するとキャッシュが全更新される
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = 'gamelog-' + CACHE_VERSION;
 
 // キャッシュ対象のファイル一覧
@@ -9,7 +9,12 @@ const CACHE_FILES = [
   '/index.html',
   '/pages/fl/index.html',
   '/pages/fl/rank5-boss.html',
-  '/pages/fl/level-up.html'
+  '/pages/fl/level-up.html',
+  '/pages/fl/rank5-overview.html',
+  '/pages/fl/items.html',
+  '/pages/fl/legendary-monsters.html',
+  '/pages/fl/gathering.html',
+  '/pages/fl/search.html'
 ];
 
 // インストール時: 全ファイルをキャッシュ

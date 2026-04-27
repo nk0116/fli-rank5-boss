@@ -1,6 +1,6 @@
 // Service Worker for GameLog
 // バージョンを変更するとキャッシュが全更新される
-const CACHE_VERSION = 'v-20260428004843';
+const CACHE_VERSION = 'v-20260428014233';
 const CACHE_NAME = 'gamelog-' + CACHE_VERSION;
 
 // キャッシュ対象のファイル一覧
@@ -46,7 +46,9 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// フェッチ時: キャッシュファースト + バックグラウンド更新
+// フェッチ時:
+//   HTML       → ネットワークファースト（常に最新を取得、失敗時のみキャッシュ）
+//   その他資産 → キャッシュファースト（バックグラウンド更新）
 self.addEventListener('fetch', (event) => {
   // GETリクエストのみキャッシュ対象
   if (event.request.method !== 'GET') return;
@@ -55,9 +57,38 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
+  // HTML判定: navigation、.html末尾、ディレクトリ末尾(/) のいずれか
+  const isHtml = event.request.mode === 'navigate'
+              || event.request.destination === 'document'
+              || url.pathname.endsWith('.html')
+              || url.pathname.endsWith('/');
+
+  if (isHtml) {
+    // ネットワークファースト：常に最新HTMLを取得、失敗時のみキャッシュにフォールバック
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // ネットワーク失敗時はキャッシュから返す（オフライン対応）
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          // ルート・index系のフォールバック
+          return caches.match('/index.html');
+        });
+      })
+    );
+    return;
+  }
+
+  // それ以外（CSS/JS/画像/JSON等）：キャッシュファースト + バックグラウンド更新
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // バックグラウンドでネットワークから取得してキャッシュを更新
       const fetchPromise = fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();

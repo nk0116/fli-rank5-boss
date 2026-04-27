@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a0000">
+<link rel="manifest" href="/manifest.json">
+<title>ペルソナ5R 進捗連動攻略 - GameLog</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; background: #1a0000; color: #f5e6d3; padding: 20px; min-height: 100vh; }
+
+  .breadcrumb { max-width: 700px; margin: 0 auto 16px; font-size: 0.8rem; }
+  .breadcrumb a { color: #ff6b6b; text-decoration: none; }
+  .breadcrumb a:hover { color: #E60012; }
+  .breadcrumb span { color: #555; margin: 0 6px; }
+
+  h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; color: #E60012; letter-spacing: 1px; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #999; margin-bottom: 24px; }
+
+  .container { max-width: 700px; margin: 0 auto; }
+
+  /* ===== Progress Selector ===== */
+  .progress-selector { background: #2D0808; border: 1px solid #5a1414; border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; }
+  .progress-selector-label { display: block; font-size: 0.78rem; color: #f5e6d3; margin-bottom: 10px; font-weight: 600; letter-spacing: 0.5px; }
+  .progress-selector select { width: 100%; padding: 12px 14px; background: #1a0000; color: #f5e6d3; border: 1px solid #A30013; border-radius: 8px; font-size: 0.92rem; font-family: inherit; cursor: pointer; transition: all 0.2s; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3e%3cpath fill='%23E60012' d='M2 4l4 4 4-4z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .progress-selector select:hover { border-color: #E60012; }
+  .progress-selector select:focus { outline: none; border-color: #E60012; box-shadow: 0 0 0 2px #E6001233; }
+  .progress-info { font-size: 0.75rem; color: #999; margin-top: 8px; }
+
+  /* ===== Section Title ===== */
+  .section-heading { font-size: 0.78rem; color: #E60012; text-transform: uppercase; letter-spacing: 1.5px; margin: 24px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #5a1414; font-weight: bold; }
+  .section-heading-icon { margin-right: 6px; }
+
+  /* ===== Palace Card ===== */
+  .palace-card { background: #2D0808; border: 1px solid #5a1414; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .palace-card.current { border-color: #E60012; background: linear-gradient(135deg, #2D0808 0%, #3a0a0a 100%); box-shadow: 0 0 0 2px #E6001222; }
+  .palace-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
+  .palace-card-title { font-size: 1.1rem; font-weight: bold; color: #fff; }
+  .palace-card-no { font-size: 0.7rem; background: #E6001222; color: #ff6b6b; padding: 3px 10px; border-radius: 12px; border: 1px solid #E6001244; flex-shrink: 0; white-space: nowrap; }
+  .palace-card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; font-size: 0.78rem; }
+  .palace-meta-item { background: #1a0000; padding: 5px 10px; border-radius: 6px; border: 1px solid #5a1414; }
+  .palace-meta-label { color: #999; margin-right: 4px; }
+  .palace-meta-value { color: #f5e6d3; font-weight: 600; }
+
+  .palace-section { margin-top: 14px; }
+  .palace-section-title { font-size: 0.82rem; color: #ff6b6b; font-weight: 600; margin-bottom: 6px; padding-left: 8px; border-left: 3px solid #E60012; }
+  .palace-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .palace-list li { font-size: 0.82rem; color: #d8c4a8; line-height: 1.6; padding: 6px 10px; background: #1a0000; border-radius: 6px; }
+  .palace-list li strong { color: #fff; }
+
+  /* ===== Completed Palaces (折りたたみ) ===== */
+  .completed-section { background: #1a0a0a; border: 1px solid #3a0a0a; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .completed-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; transition: background 0.2s; }
+  .completed-header:hover { background: #2a0a0a; }
+  .completed-header-left { display: flex; align-items: center; gap: 10px; }
+  .completed-icon { font-size: 0.95rem; }
+  .completed-title { font-size: 0.85rem; font-weight: 600; color: #d8c4a8; }
+  .completed-count { font-size: 0.7rem; color: #888; margin-left: 4px; }
+  .completed-chevron { color: #777; font-size: 0.85rem; transition: transform 0.3s; }
+  .completed-section.open .completed-chevron { transform: rotate(180deg); }
+  .completed-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .completed-section.open .completed-body { max-height: 5000px; }
+  .completed-content { padding: 0 16px 14px; }
+
+  /* ===== Next Palace (警告つき) ===== */
+  .next-palace-warning { background: #2D0808; border: 1px solid #5a1414; border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .next-palace-warning-btn { width: 100%; padding: 12px 16px; background: #1a0000; color: #ff6b6b; border: 1px dashed #ff6b6b; border-radius: 8px; font-size: 0.88rem; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+  .next-palace-warning-btn:hover { background: #2a0808; border-style: solid; }
+  .next-palace-warning-btn:focus { outline: none; box-shadow: 0 0 0 2px #ff6b6b44; }
+  .next-palace-content { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #5a1414; }
+  .next-palace-content.open { display: block; }
+  .next-palace-warning-label { font-size: 0.72rem; color: #ffaa00; margin-bottom: 8px; padding: 6px 10px; background: #2a1a00; border-radius: 6px; border-left: 3px solid #ffaa00; }
+
+  /* ===== Locked Palaces (鍵) ===== */
+  .locked-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .locked-item { background: #14080a; border: 1px solid #2a0a0a; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; opacity: 0.6; }
+  .locked-icon { font-size: 1rem; color: #555; flex-shrink: 0; }
+  .locked-text { font-size: 0.82rem; color: #666; }
+
+  /* ===== Common Info (常時表示) ===== */
+  .common-info { background: #2D0808; border: 1px solid #5a1414; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .common-info-title { font-size: 0.95rem; color: #fff; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .common-info-title-icon { font-size: 1.05rem; }
+  .common-info-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .common-info-list li { font-size: 0.82rem; color: #d8c4a8; line-height: 1.6; padding: 8px 12px; background: #1a0000; border-radius: 6px; border-left: 3px solid #E60012; }
+  .common-info-list li strong { color: #fff; }
+  .common-info-list li .coop-arcana { display: inline-block; background: #E6001222; color: #ff6b6b; padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; margin-right: 6px; border: 1px solid #E6001244; }
+
+  /* ===== Hamburger Menu ===== */
+  .hamburger-btn { position: fixed; top: 16px; right: 16px; z-index: 1001; width: 44px; height: 44px; background: #2D0808; border: 1px solid #5a1414; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.3s; }
+  .hamburger-btn:hover { border-color: #E60012; }
+  .hamburger-btn span { display: block; width: 22px; height: 2px; background: #E60012; border-radius: 2px; transition: all 0.3s; }
+  .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .nav-overlay.active { opacity: 1; visibility: visible; }
+  .nav-panel { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: #2D0808; z-index: 1000; padding: 80px 24px 24px; transition: right 0.3s ease; box-shadow: -4px 0 20px rgba(0,0,0,0.5); overflow-y: auto; }
+  .nav-panel.active { right: 0; }
+  .nav-panel-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #5a1414; }
+  .nav-section-label { font-size: 0.65rem; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid #5a1414; }
+  .nav-link { display: block; padding: 10px 14px; margin-bottom: 2px; color: #f5e6d3; text-decoration: none; border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
+  .nav-link:hover { background: #5a1414; color: #ff6b6b; }
+  .nav-link.current { background: #E6001215; color: #ff6b6b; font-weight: bold; border-left: 3px solid #E60012; }
+  .nav-link-desc { font-size: 0.72rem; color: #888; margin-top: 2px; }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 1.3rem; }
+    .palace-card { padding: 14px 16px; }
+    .palace-card-title { font-size: 1rem; }
+    .palace-meta-item { font-size: 0.74rem; }
+    .common-info { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hamburger Menu -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="メニューを開く" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="nav-panel" id="navPanel" aria-label="サイトナビゲーション">
+  <div class="nav-panel-title">GameLog</div>
+  <a href="../../index.html" class="nav-link">
+    ポータルTOP
+    <div class="nav-link-desc">ゲーム一覧</div>
+  </a>
+  <div class="nav-section-label">ペルソナ5R</div>
+  <a href="index.html" class="nav-link current">
+    P5R 進捗連動攻略
+    <div class="nav-link-desc">パレス進捗に応じた情報表示</div>
+  </a>
+  <div class="nav-section-label">ファンタジーライフi</div>
+  <a href="../fl/index.html" class="nav-link">
+    FL攻略TOP
+    <div class="nav-link-desc">攻略ページ一覧</div>
+  </a>
+</nav>
+
+<div class="breadcrumb">
+  <a href="../../index.html">GameLog</a>
+  <span>></span>
+  ペルソナ5R
+</div>
+
+<h1>ペルソナ5R 進捗連動攻略</h1>
+<p class="subtitle">パレス進捗を選ぶとネタバレを抑えて情報表示</p>
+
+<div class="container">
+
+  <!-- ===== Progress Selector ===== -->
+  <div class="progress-selector">
+    <label for="progressSelect" class="progress-selector-label">現在の進捗</label>
+    <select id="progressSelect">
+      <option value="0">未着手</option>
+      <option value="1">パレス1 クリア済</option>
+      <option value="2">パレス2 クリア済</option>
+      <option value="3">パレス3 クリア済</option>
+      <option value="4">パレス4 クリア済</option>
+      <option value="5">パレス5 クリア済</option>
+      <option value="6">パレス6 クリア済</option>
+      <option value="7">パレス7 クリア済（全クリア）</option>
+    </select>
+    <div class="progress-info">進捗を変更すると、表示される攻略情報が連動して切り替わります。完了済みは折りたたみ、未到達は鍵で隠されます。</div>
+  </div>
+
+  <!-- ===== Current Palace ===== -->
+  <div class="section-heading"><span class="section-heading-icon">🎯</span>現在のパレス</div>
+  <div id="currentPalaceContainer"></div>
+
+  <!-- ===== Next Palace (警告つき) ===== -->
+  <div id="nextPalaceContainer"></div>
+
+  <!-- ===== Completed Palaces ===== -->
+  <div id="completedPalacesContainer"></div>
+
+  <!-- ===== Locked Palaces ===== -->
+  <div id="lockedPalacesContainer"></div>
+
+  <!-- ===== Common Info: ペルソナ合体 ===== -->
+  <div class="section-heading"><span class="section-heading-icon">🃏</span>ペルソナ合体・基本テクニック</div>
+  <div class="common-info">
+    <div class="common-info-title"><span class="common-info-title-icon">⚗️</span>合体の基礎（常時参考可能）</div>
+    <ul class="common-info-list">
+      <li><strong>合体場所</strong>: ベルベットルームのイゴール（双子の看守カロリーヌ&ジュスティーヌ）</li>
+      <li><strong>仮レベル計算</strong>: 「合体元ペルソナ初期レベル合計÷2 + 1」で生成ペルソナのレベルが決まる</li>
+      <li><strong>双子コープランク5で「特別処置」解禁</strong>: 自分のレベルを超えるペルソナも作れる（最大の壁が外れる）</li>
+      <li><strong>宝魔合体</strong>: 素材と同じアルカナのペルソナが生成される。狙ったペルソナを作りやすい便利合体</li>
+      <li><strong>ジョーカー強化</strong>: パレス進行中も合体は積極的に。HP/SP回復＋スキル継承で常にメインを更新</li>
+    </ul>
+  </div>
+
+  <!-- ===== Common Info: コープ優先度 ===== -->
+  <div class="section-heading"><span class="section-heading-icon">🤝</span>コープ優先度（序盤〜中盤）</div>
+  <div class="common-info">
+    <div class="common-info-title"><span class="common-info-title-icon">⭐</span>優先して上げたいコープ7選</div>
+    <ul class="common-info-list">
+      <li><span class="coop-arcana">死神</span><strong>武見妙</strong>: ランク5でアクセサリ「貼る大気功」（毎ターンSP+7）。SP問題が解決</li>
+      <li><span class="coop-arcana">月</span><strong>三島由輝</strong>: 仲間経験値ボーナス／控えメンバーも経験値獲得で全員育つ</li>
+      <li><span class="coop-arcana">太陽</span><strong>吉田寅之助</strong>: 会話交渉で金銭・アイテム要求／自分より上のレベルのシャドウも合体可</li>
+      <li><span class="coop-arcana">戦車</span><strong>坂本竜司</strong>: ランク7で「瞬殺」＝10レベル下のシャドウ戦闘省略</li>
+      <li><span class="coop-arcana">法王</span><strong>岩井宗久（武器屋）</strong>: 自作武器の性能アップ（中盤以降の装備の主軸）</li>
+      <li><span class="coop-arcana">運命</span><strong>御船千早</strong>: ランク7「相性占い」で時間消費なしに好感度UP（時間効率が爆発）</li>
+      <li><span class="coop-arcana">女教皇</span><strong>川上貞代</strong>: コーヒー作成・夜活動許可・夜のパレス潜入解禁（時間が増える）</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+// ===== Palace Data =====
+const PALACES = [
+  {
+    no: 1,
+    title: '鴨志田パレス（城）',
+    deadline: '5月2日',
+    levelRange: '5〜11',
+    personas: [
+      'ジャックフロスト（魔術師）: ブフ系、汎用性高',
+      'ピクシー（恋人）: 最序盤の回復役',
+      'オバリヨン（邪鬼系）: スクンダで命中率ダウン',
+      'スライム（愚者）: 物理耐性・壁役',
+      'ゲンブ（正義）: ブフ持ち'
+    ],
+    equipment: [
+      '<strong>武器</strong>: パレス内宝箱で入手できるものでOK',
+      '<strong>防具</strong>: 宝箱優先（ミリタリーショップは資金温存）'
+    ],
+    tips: [
+      '「<strong>イシ</strong>」3つ必ず回収（1個でSP25回復）',
+      '最低3日必要（ルート確保→予告状→ボス戦）',
+      'サードアイ（R1）でギミックヒント青く光る',
+      '<strong>ボス</strong>: 氷結弱点、物理連発に注意。スライムで物理耐性確保'
+    ]
+  },
+  {
+    no: 2,
+    title: '斑目パレス（美術館）',
+    deadline: '6月10日',
+    levelRange: '12〜20',
+    personas: [
+      'ハイピクシー（恋人）: Lv16で仲魔化、長く活躍',
+      'シキオウジ（太陽）: コッパテング×ジャックフロスト合体、物理＆銃撃無効、鉄板',
+      'マタドール（死神）: 疾風スキル',
+      'ベルフェゴール（悪魔）: 念動スキル'
+    ],
+    equipment: [
+      'すすけた防具を新宿コインランドリーで洗濯して本性能化',
+      '武見コープで「貼る大気功」解禁次第購入'
+    ],
+    tips: [
+      'ボスは<strong>4属性の贋作</strong>→アギ・ジオ・ガル・ブフの4属性ペルソナを揃える',
+      '中央庭園で撤退イベントあり、慌てない',
+      '<strong>6月10日までに予告状必須</strong>（過ぎるとゲームオーバー）'
+    ]
+  },
+  {
+    no: 3,
+    title: '金城パレス（銀行）',
+    deadline: '7月9日',
+    levelRange: '21〜26',
+    personas: [
+      'シキオウジ（太陽）: 物理銃撃無効＋呪怨無効、ボス物理対策',
+      'ライアナンシー（恋人）: 状態異常特化（睡眠など）',
+      'マリンカリン持ち全般: オニ系を眠らせる',
+      'ジャックランタン上位（法王）: 火炎要員',
+      'シーサー（戦車）: 念動持ち'
+    ],
+    equipment: [
+      'ミリタリーショップで武器更新',
+      'すすけた防具→洗濯'
+    ],
+    tips: [
+      '監視カメラ多数、サードアイで範囲確認＋電気ボックス破壊で停止',
+      '<strong>ボスは物理＋火炎全体＋絶望・睡眠頻発</strong>、ディアラハン重要',
+      '2戦目はドルミナー（睡眠）有効、アンを編成'
+    ]
+  },
+  {
+    no: 4,
+    title: '双葉パレス（ピラミッド）',
+    deadline: '8月後半（8月内に必ずクリア）',
+    levelRange: '26〜36',
+    personas: [
+      'ネコショウグン（月）: 大量合体で生成、ガルーラ全体疾風',
+      'シキオウジ（太陽）: 物理銃撃無効',
+      'アラハバキ（太陽）: 物理銃撃を反射'
+    ],
+    equipment: [
+      '岩井法王コープで自作武器',
+      '呪怨・念動ブースタ系アクセサリ（吉祥寺）'
+    ],
+    tips: [
+      'ボスは空中物理全体攻撃強烈、シキオウジ／アラハバキで対策',
+      '<strong>疾風弱点の竜司は外す</strong>',
+      'バリスタでボスを撃ち落とす→3ターン物理が当たる',
+      '双葉覚醒後の会話で正解選択（「ボスに反論する」系）'
+    ]
+  },
+  {
+    no: 5,
+    title: '奥村パレス（スペースポート）',
+    deadline: '10月11日',
+    levelRange: '36〜43',
+    personas: [
+      'ホワイトライダー（死神）: マハエイガ習得、本命',
+      'シキオウジ（太陽）: 物理銃撃無効',
+      'アラハバキ（太陽）: 物理反射',
+      'だいそうじょう（法王）: マハコウガ高威力'
+    ],
+    equipment: [
+      '念動ブースタ／呪怨ハイブースタ（吉祥寺）',
+      'サイコボム4個以上作成'
+    ],
+    tips: [
+      '<strong>30分の時間制限あり</strong>、無駄戦闘NG',
+      '社畜ロボ4体を順番に2ターン以内',
+      'バトンタッチ全員繋げる編成',
+      '各タイプの弱点（火炎/氷結/電撃/疾風/祝福/核熱）を揃えてから挑む'
+    ]
+  },
+  {
+    no: 6,
+    title: '新島パレス（カジノ）',
+    deadline: '11月18日',
+    levelRange: '45〜53',
+    personas: [
+      'メギド系（万能）持ち: 弱点不問',
+      'ミラクルパンチ系（クリティカル特化）',
+      '祝福・呪怨スキル持ち',
+      'シキオウジ／アラハバキ（太陽）'
+    ],
+    equipment: [
+      'パニッシュダガー（神田）',
+      'すすけた防具→洗濯（仲間用も）'
+    ],
+    tips: [
+      'ダイスルームで<strong>コイン5万枚</strong>稼ぐ',
+      'ボスは<strong>祝福のみ弱点</strong>、コウガ系でダウン→総攻撃',
+      'ルーレットタイム中の攻撃はHP1ペナルティ、回復・補助で待つ',
+      'メギドラ＋物理多用、タルンダで攻撃力低下維持',
+      'パレス潜って1日空けて再突入仕様'
+    ]
+  },
+  {
+    no: 7,
+    title: '獅童パレス（クルーザー）',
+    deadline: '12月18日',
+    levelRange: '55〜60',
+    personas: [
+      'シキオウジ（太陽）: 物理銃撃無効、獅童物理完封',
+      '5属性（火炎/氷結/電撃/疾風/祝福）耐性ペルソナ',
+      '核熱・念動弱点突き（IT社長は核熱、同伴は念動）'
+    ],
+    equipment: [
+      'パニッシュダガー継続 or 岩井自作武器',
+      '状態異常防止アクセサリ（恐怖対策）'
+    ],
+    tips: [
+      '罠とギミック多い、SP回復アイテム＋フロアオーラで長期対応',
+      'HP/状態異常回復は武見コープのクリニックアイテム',
+      '<strong>ボスは物理に恐怖付与</strong>、状態異常防止必須',
+      'パーティバフ多いとデカジャ使ってくる、火力で押し切る',
+      'シキオウジに強力スキル継承＋デカジャ・タルンダ'
+    ]
+  }
+];
+
+// ===== State =====
+const PROGRESS_KEY = 'p5r_progress';
+
+function loadProgress() {
+  try {
+    const v = parseInt(localStorage.getItem(PROGRESS_KEY) || '0', 10);
+    return Number.isFinite(v) && v >= 0 && v <= 7 ? v : 0;
+  } catch { return 0; }
+}
+
+function saveProgress(v) {
+  localStorage.setItem(PROGRESS_KEY, String(v));
+}
+
+// ===== Render =====
+function renderPalaceCard(p, options) {
+  options = options || {};
+  const isCurrent = options.isCurrent;
+  const cls = isCurrent ? 'palace-card current' : 'palace-card';
+  return `
+    <div class="${cls}">
+      <div class="palace-card-header">
+        <span class="palace-card-title">${p.title}</span>
+        <span class="palace-card-no">パレス${p.no}</span>
+      </div>
+      <div class="palace-card-meta">
+        <span class="palace-meta-item"><span class="palace-meta-label">期限</span><span class="palace-meta-value">${p.deadline}</span></span>
+        <span class="palace-meta-item"><span class="palace-meta-label">推奨Lv</span><span class="palace-meta-value">${p.levelRange}</span></span>
+      </div>
+      <div class="palace-section">
+        <div class="palace-section-title">推奨ペルソナ</div>
+        <ul class="palace-list">
+          ${p.personas.map(x => `<li>${x}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="palace-section">
+        <div class="palace-section-title">推奨装備</div>
+        <ul class="palace-list">
+          ${p.equipment.map(x => `<li>${x}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="palace-section">
+        <div class="palace-section-title">攻略Tips</div>
+        <ul class="palace-list">
+          ${p.tips.map(x => `<li>${x}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function renderCurrentPalace(progress) {
+  const container = document.getElementById('currentPalaceContainer');
+  // 進捗 N = N番目までクリア済 → 次に挑むのは N+1
+  const currentNo = progress + 1;
+  if (currentNo > 7) {
+    container.innerHTML = `
+      <div class="palace-card current">
+        <div class="palace-card-header">
+          <span class="palace-card-title">🎉 7パレスすべてクリア</span>
+        </div>
+        <div class="palace-section">
+          <ul class="palace-list">
+            <li>本編パレス7まで完走、お疲れ様です。</li>
+            <li>マルキパレス・3学期・真エンドルートの情報は別途追加予定です。</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  const palace = PALACES[currentNo - 1];
+  container.innerHTML = renderPalaceCard(palace, { isCurrent: true });
+}
+
+function renderNextPalace(progress) {
+  const container = document.getElementById('nextPalaceContainer');
+  const currentNo = progress + 1;       // いま挑むパレス
+  const nextNo = currentNo + 1;          // その次（軽いネタバレ）
+  if (nextNo > 7) {
+    container.innerHTML = '';
+    return;
+  }
+  const palace = PALACES[nextNo - 1];
+  container.innerHTML = `
+    <div class="section-heading"><span class="section-heading-icon">⚠️</span>次のパレス（軽いネタバレあり）</div>
+    <div class="next-palace-warning">
+      <button class="next-palace-warning-btn" id="nextPalaceToggle" aria-expanded="false">
+        ⚠️ 次の情報を見る（パレス${nextNo}）
+      </button>
+      <div class="next-palace-content" id="nextPalaceContent">
+        <div class="next-palace-warning-label">⚠️ 次の標的に関する軽いネタバレを含みます。OK な場合のみ読み進めてください。</div>
+        ${renderPalaceCard(palace)}
+      </div>
+    </div>
+  `;
+  // Toggle handler
+  const btn = document.getElementById('nextPalaceToggle');
+  const content = document.getElementById('nextPalaceContent');
+  btn.addEventListener('click', () => {
+    const opened = content.classList.toggle('open');
+    btn.setAttribute('aria-expanded', opened);
+    btn.textContent = opened
+      ? `閉じる（パレス${nextNo}）`
+      : `⚠️ 次の情報を見る（パレス${nextNo}）`;
+  });
+}
+
+function renderCompletedPalaces(progress) {
+  const container = document.getElementById('completedPalacesContainer');
+  if (progress < 1) {
+    container.innerHTML = '';
+    return;
+  }
+  const completed = PALACES.slice(0, progress);
+  container.innerHTML = `
+    <div class="section-heading"><span class="section-heading-icon">✅</span>完了済みパレス</div>
+    <div class="completed-section" id="completedSection">
+      <div class="completed-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="completed-header-left">
+          <span class="completed-icon">📚</span>
+          <span class="completed-title">クリア済みパレスをまとめて見る</span>
+          <span class="completed-count">${completed.length}件</span>
+        </div>
+        <span class="completed-chevron">▼</span>
+      </div>
+      <div class="completed-body">
+        <div class="completed-content">
+          ${completed.map(p => renderPalaceCard(p)).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  // Toggle handler
+  const section = document.getElementById('completedSection');
+  const header = section.querySelector('.completed-header');
+  const toggle = () => {
+    section.classList.toggle('open');
+    header.setAttribute('aria-expanded', section.classList.contains('open'));
+  };
+  header.addEventListener('click', toggle);
+  header.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggle();
+    }
+  });
+}
+
+function renderLockedPalaces(progress) {
+  const container = document.getElementById('lockedPalacesContainer');
+  const currentNo = progress + 1;        // いま挑むパレス
+  const nextNo = currentNo + 1;           // 警告付きで見られる
+  // 鍵で隠すのは nextNo + 1 以降
+  const lockedFromNo = nextNo + 1;
+  if (lockedFromNo > 7) {
+    container.innerHTML = '';
+    return;
+  }
+  const lockedCount = 7 - lockedFromNo + 1;
+  const items = [];
+  for (let n = lockedFromNo; n <= 7; n++) {
+    items.push(`<div class="locked-item"><span class="locked-icon">🔒</span><span class="locked-text">パレス${n} - ここから先は進捗が進むと表示されます</span></div>`);
+  }
+  container.innerHTML = `
+    <div class="section-heading"><span class="section-heading-icon">🔒</span>未到達パレス（${lockedCount}件）</div>
+    <div class="locked-list">${items.join('')}</div>
+  `;
+}
+
+function renderAll(progress) {
+  renderCurrentPalace(progress);
+  renderNextPalace(progress);
+  renderCompletedPalaces(progress);
+  renderLockedPalaces(progress);
+}
+
+// ===== Init =====
+const select = document.getElementById('progressSelect');
+let currentProgress = loadProgress();
+select.value = String(currentProgress);
+renderAll(currentProgress);
+
+select.addEventListener('change', (e) => {
+  const v = parseInt(e.target.value, 10) || 0;
+  currentProgress = v;
+  saveProgress(v);
+  renderAll(v);
+});
+
+// ===== Hamburger Menu =====
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const navOverlay = document.getElementById('navOverlay');
+const navPanel = document.getElementById('navPanel');
+
+function toggleMenu() {
+  const isOpen = navPanel.classList.contains('active');
+  hamburgerBtn.classList.toggle('active');
+  navOverlay.classList.toggle('active');
+  navPanel.classList.toggle('active');
+  hamburgerBtn.setAttribute('aria-expanded', !isOpen);
+  hamburgerBtn.setAttribute('aria-label', isOpen ? 'メニューを開く' : 'メニューを閉じる');
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+hamburgerBtn.addEventListener('click', toggleMenu);
+navOverlay.addEventListener('click', toggleMenu);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && navPanel.classList.contains('active')) toggleMenu();
+});
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  if (sessionStorage.getItem('sw-reloaded')) {
+    sessionStorage.removeItem('sw-reloaded');
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (sessionStorage.getItem('sw-reloaded')) return;
+    sessionStorage.setItem('sw-reloaded', '1');
+    window.location.reload();
+  });
+
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'activated') {
+          if (!navigator.serviceWorker.controller) return;
+        }
+      });
+    });
+  });
+}
+</script>
+</body>
+</html>

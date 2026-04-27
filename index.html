@@ -84,6 +84,30 @@
   .guide-link--items:hover { border-left-color: #d6a3ff; }
   .guide-link--gather { border-left: 3px solid #3498db; }
   .guide-link--gather:hover { border-left-color: #74b9ff; }
+  .guide-link--p5r { border-left: 3px solid #E60012; }
+  .guide-link--p5r:hover { border-left-color: #ff6b6b; }
+
+  /* ===== Persona5R Theme (Detail Screen Override) ===== */
+  #screenDetail-p5r .game-card-genre,
+  #screenDetail-p5r .detail-game-genre { background: #E6001222; color: #ff6b6b; border-color: #E6001255; }
+  #screenDetail-p5r .back-btn { color: #ff6b6b; background: #2D0808; border-color: #5a1414; }
+  #screenDetail-p5r .back-btn:hover { border-color: #E60012; background: #3a0a0a; }
+  #screenDetail-p5r .accordion-section { background: #2D0808; border-color: #5a1414; }
+  #screenDetail-p5r .accordion-header:hover { background: #3a0a0a; }
+  #screenDetail-p5r .accordion-title { color: #fff; }
+  #screenDetail-p5r .accordion-count { color: #999; }
+  #screenDetail-p5r .accordion-chevron { color: #999; }
+  #screenDetail-p5r .guide-link { background: #1a0000; border-color: #5a1414; color: #f5e6d3; }
+  #screenDetail-p5r .guide-link:hover { border-color: #E60012; background: #2D0808; }
+  #screenDetail-p5r .guide-link-title { color: #fff; }
+  #screenDetail-p5r .guide-link-desc { color: #999; }
+  #screenDetail-p5r .ext-link { color: #ff6b6b; }
+  #screenDetail-p5r .ext-link:hover { background: #2D0808; color: #ffaaaa; }
+  #screenDetail-p5r .ext-link-bullet { color: #777; }
+  #screenDetail-p5r .ext-link-domain { color: #777; }
+  #screenDetail-p5r .memo-list li { background: #1a0000; border-left-color: #E60012; color: #d8c4a8; }
+  #screenDetail-p5r .memo-list li.empty { color: #777; font-style: italic; }
+  #screenDetail-p5r .section-heading { color: #999; border-bottom-color: #5a1414; }
 
   /* Memo */
   .memo-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
@@ -167,6 +191,11 @@
     ポータルTOP
     <div class="nav-link-desc">ゲーム一覧</div>
   </a>
+  <div class="nav-section-label">ペルソナ5R</div>
+  <a href="pages/persona5r/index.html" class="nav-link">
+    P5R 進捗連動攻略
+    <div class="nav-link-desc">パレス進捗に応じた情報表示</div>
+  </a>
   <div class="nav-section-label">ファンタジーライフi</div>
   <a href="pages/fl/index.html" class="nav-link">
     FL攻略TOP
@@ -217,6 +246,16 @@
           </div>
         </div>
         <div class="game-card-desc">バカデッカーナ大陸の攻略情報まとめ。ボス攻略・レベル上げ効率ガイドなど。</div>
+      </div>
+      <div class="game-card" data-game="p5r" role="button" tabindex="0" aria-label="ペルソナ5 ザ・ロイヤル の詳細を表示" style="border-color:#E6001244;">
+        <div class="game-card-header">
+          <span class="game-card-title">ペルソナ5 ザ・ロイヤル</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="game-card-genre" style="background:#E6001222;color:#ff6b6b;border-color:#E6001255;">RPG</span>
+            <span class="game-card-arrow">›</span>
+          </div>
+        </div>
+        <div class="game-card-desc">東京を舞台にした怪盗団RPG。パレス攻略・コープ・ペルソナ合体まとめ。</div>
       </div>
       <!-- 将来のゲーム追加はここに .game-card を追加 -->
     </div>
@@ -502,6 +541,153 @@
   </div>
 </div>
 
+<!-- ===== Screen: P5R Detail ===== -->
+<div class="screen" id="screenDetail-p5r">
+  <div class="container">
+    <button class="back-btn" id="backBtn-p5r" aria-label="ゲーム一覧に戻る">
+      <span class="back-btn-icon">←</span>
+      <span>ゲーム一覧に戻る</span>
+    </button>
+
+    <div class="detail-game-header">
+      <span class="detail-game-title">ペルソナ5 ザ・ロイヤル</span>
+      <span class="detail-game-genre">RPG</span>
+    </div>
+
+    <div class="accordion">
+
+      <!-- セクション: 攻略ページ -->
+      <div class="accordion-section open" data-section="p5r-guide-pages">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">📖</span>
+            <span class="accordion-title">攻略ページ</span>
+            <span class="accordion-count">1件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="guide-links">
+              <a href="pages/persona5r/index.html" class="guide-link guide-link--p5r">
+                <div class="guide-link-icon">🎯</div>
+                <div class="guide-link-text">
+                  <div class="guide-link-title">P5R 進捗連動攻略</div>
+                  <div class="guide-link-desc">パレス進捗を選ぶと推奨Lv・ペルソナ・装備・Tipsを表示。ネタバレ最小化</div>
+                </div>
+                <div class="guide-link-arrow">›</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: メモ -->
+      <div class="accordion-section open" data-section="p5r-memo">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">📝</span>
+            <span class="accordion-title">メモ</span>
+            <span class="accordion-count">0件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <ul class="memo-list">
+              <li class="empty">（メモはまだありません。気付いたことがあればここに書き溜める想定）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: リンク集 -->
+      <div class="accordion-section open" data-section="p5r-links">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">🔗</span>
+            <span class="accordion-title">リンク集</span>
+            <span class="accordion-count">13件</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="ext-links">
+              <a href="https://game8.jp/p5r" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>ペルソナ5ロイヤル攻略サイト（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://altema.jp/persona5r/" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>ペルソナ5ロイヤル攻略wiki（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://kamigame.jp/P5R/index.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>P5R攻略Wiki（神ゲー攻略）<span class="ext-link-domain">kamigame.jp</span>
+              </a>
+              <a href="https://kamigame.jp/P5R/%E6%94%BB%E7%95%A5%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88/index.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>ストーリー攻略チャート月別（神ゲー攻略）<span class="ext-link-domain">kamigame.jp</span>
+              </a>
+              <a href="https://altema.jp/persona5r/kouryakuchart" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>月別攻略チャート（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://game8.jp/p5r/480613" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>パレスと推奨レベル一覧（Game8）<span class="ext-link-domain">game8.jp</span>
+              </a>
+              <a href="https://kamigame.jp/P5R/%E3%83%91%E3%83%AC%E3%82%B9/index.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>パレス攻略一覧予告状期限（神ゲー攻略）<span class="ext-link-domain">kamigame.jp</span>
+              </a>
+              <a href="https://altema.jp/persona5r/corpyusen" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>コープ攻略優先度（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://p5r.gamekouryaku-no-ki.com/combine" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>ペルソナ合体組み合わせ検索<span class="ext-link-domain">gamekouryaku-no-ki.com</span>
+              </a>
+              <a href="https://kamigame.jp/P5R/%E3%83%9A%E3%83%AB%E3%82%BD%E3%83%8A/%E5%90%88%E4%BD%93.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>合体の法則と合体表（神ゲー攻略）<span class="ext-link-domain">kamigame.jp</span>
+              </a>
+              <a href="https://kamigame.jp/P5R/%E6%94%BB%E7%95%A5%E3%82%AC%E3%82%A4%E3%83%89/%E6%9C%80%E5%BC%B7%E6%AD%A6%E5%99%A8.html" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>最強武器と防具（神ゲー攻略）<span class="ext-link-domain">kamigame.jp</span>
+              </a>
+              <a href="https://altema.jp/persona5r/kosyukei" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>絞首刑レベル上げ（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+              <a href="https://altema.jp/persona5r/edbunki" class="ext-link" target="_blank" rel="noopener">
+                <span class="ext-link-bullet">●</span>エンディング分岐真エンド（アルテマ）<span class="ext-link-domain">altema.jp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション: 進捗（リンクで個別ページに飛ばす） -->
+      <div class="accordion-section open" data-section="p5r-progress">
+        <div class="accordion-header" role="button" tabindex="0" aria-expanded="true">
+          <div class="accordion-header-left">
+            <span class="accordion-icon">🎯</span>
+            <span class="accordion-title">進捗</span>
+            <span class="accordion-count" id="p5rProgressLabel">未着手</span>
+          </div>
+          <span class="accordion-chevron">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <div class="guide-links">
+              <a href="pages/persona5r/index.html" class="guide-link guide-link--p5r">
+                <div class="guide-link-icon">🎯</div>
+                <div class="guide-link-text">
+                  <div class="guide-link-title">進捗連動攻略ページを開く</div>
+                  <div class="guide-link-desc" id="p5rProgressDesc">進捗を選ぶと推奨Lv・推奨ペルソナ・装備・Tipsが連動して表示</div>
+                </div>
+                <div class="guide-link-arrow">›</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.accordion -->
+  </div>
+</div>
+
 <script>
 // ===== Screen Navigation =====
 const SCREEN_STORAGE_KEY = 'gamelog-current-screen';
@@ -683,6 +869,47 @@ function initChecklist() {
 }
 
 initChecklist();
+
+// ===== P5R progress label sync (read-only display) =====
+(function syncP5rProgressLabel() {
+  const P5R_KEY = 'p5r_progress';
+  const labels = [
+    '未着手',
+    'パレス1クリア',
+    'パレス2クリア',
+    'パレス3クリア',
+    'パレス4クリア',
+    'パレス5クリア',
+    'パレス6クリア',
+    '全パレスクリア'
+  ];
+  const descs = [
+    '進捗を選ぶと推奨Lv・推奨ペルソナ・装備・Tipsが連動して表示',
+    'パレス2（斑目・美術館）の推奨情報を表示中',
+    'パレス3（金城・銀行）の推奨情報を表示中',
+    'パレス4（双葉・ピラミッド）の推奨情報を表示中',
+    'パレス5（奥村・スペースポート）の推奨情報を表示中',
+    'パレス6（新島・カジノ）の推奨情報を表示中',
+    'パレス7（獅童・クルーザー）の推奨情報を表示中',
+    '本編パレス7まで完走、お疲れ様でした'
+  ];
+  function update() {
+    let v = 0;
+    try {
+      v = parseInt(localStorage.getItem(P5R_KEY) || '0', 10);
+      if (!Number.isFinite(v) || v < 0 || v > 7) v = 0;
+    } catch { v = 0; }
+    const labelEl = document.getElementById('p5rProgressLabel');
+    const descEl = document.getElementById('p5rProgressDesc');
+    if (labelEl) labelEl.textContent = labels[v];
+    if (descEl) descEl.textContent = descs[v];
+  }
+  update();
+  // Update when other tabs/pages change progress
+  window.addEventListener('storage', (e) => { if (e.key === P5R_KEY) update(); });
+  // Update when this screen becomes active (after returning from p5r page)
+  window.addEventListener('pageshow', update);
+})();
 </script>
 <script>
 if ('serviceWorker' in navigator) {

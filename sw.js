@@ -1,6 +1,6 @@
 // Service Worker for GameLog
 // バージョンを変更するとキャッシュが全更新される
-const CACHE_VERSION = 'v-20260428004424';
+const CACHE_VERSION = 'v-20260428004843';
 const CACHE_NAME = 'gamelog-' + CACHE_VERSION;
 
 // キャッシュ対象のファイル一覧
@@ -14,7 +14,8 @@ const CACHE_FILES = [
   '/pages/fl/items.html',
   '/pages/fl/legendary-monsters.html',
   '/pages/fl/gathering.html',
-  '/pages/fl/search.html'
+  '/pages/fl/search.html',
+  '/pages/persona5r/index.html'
 ];
 
 // インストール時: 全ファイルをキャッシュ
